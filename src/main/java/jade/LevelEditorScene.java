@@ -14,6 +14,10 @@ public class LevelEditorScene extends Scene {
 
     public GameObject obj1;
     private Spritesheet sprites;
+    private static int charXVal = 100;
+    private static int charYVal = 100;
+    private static int camXVal = -570;
+    private static int camYVal = -260;
 
     public LevelEditorScene() {
 
@@ -23,17 +27,20 @@ public class LevelEditorScene extends Scene {
     public void init() {
         loadResources();
 
-        this.camera = new Camera(new Vector2f(-250, 0));
+        this.camera = new Camera(new Vector2f(-350, 0));
 
         sprites = AssetPool.getSpritesheet("assets/images/spritesheet.png");
 
-        obj1 = new GameObject("Object 1", new Transform(new Vector2f(500, 50), new Vector2f(256, 256)), 3);
-        obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/villager1.png"))));
-        this.addGameObjectToScene(obj1);
+        obj1 = new GameObject("Object 1", new Transform(new Vector2f(charXVal, charYVal), new Vector2f(150, 150)), 3);
+        obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
 
-        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(400, 100), new Vector2f(256, 256)), 3);
-        obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/testImage2.png"))));
-//        this.addGameObjectToScene(obj2);
+
+        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(camXVal, camYVal), new Vector2f(2560, 2560)), 3);
+        obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/villager1.png"))));
+
+        this.addGameObjectToScene(obj2);
+
+        this.addGameObjectToScene(obj1);
     }
 
     private void loadResources() {
@@ -44,10 +51,25 @@ public class LevelEditorScene extends Scene {
                         16, 16, 26, 0));
     }
 
+    public static void moveCharacter(int x, int y) {
+        charXVal = x;
+        charYVal = y;
+    }
+
+    public static void trackCamera(int x, int y) {
+        camXVal = x - 560;
+        camYVal = y - 240;
+    }
+
     @Override
     public void update(float dt) {
 
+        obj1.transform.position = new Vector2f(charXVal, charYVal);
+        camera.position = new Vector2f(camXVal, camYVal);
+
         for (GameObject go : this.gameObjects) {
+//            System.out.println("X val: " + charXVal);
+//            System.out.println("Y val: " + charYVal);
             go.update(dt);
         }
 

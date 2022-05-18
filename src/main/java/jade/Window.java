@@ -20,6 +20,19 @@ public class Window {
     private static Window window = null;
 
     private static Scene currentScene;
+    private int moveX = 0;
+    private int moveY = 0;
+    private double momentumX = 0;
+    private double momentumY = 0;
+    private double playerAccel = 1.0;
+    private double playerMaxSpeed = 10.0;
+    private int camX = 0;
+    private int camY = 0;
+    private double distFromCam = 0;
+    private double distCamX = 0;
+    private double distCamY = 0;
+    private double camMomX = 0;
+    private double camMomY = 0;
 
     private Window() {
         this.width = 1920;
@@ -148,6 +161,67 @@ public class Window {
                 g = Math.max(g + 0.05f, 0);
                 b = Math.max(b + 0.05f, 0);
             }
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
+                if (momentumX > -playerMaxSpeed) {
+                    momentumX -= playerAccel;
+                }
+            }
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
+                if (momentumX < playerMaxSpeed) {
+                    momentumX += playerAccel;
+                }
+            }
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
+                if (momentumY > -playerMaxSpeed) {
+                    momentumY -= playerAccel;
+                }
+            }
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) {
+                if (momentumY < playerMaxSpeed) {
+                    momentumY += playerAccel;
+                }
+            }
+
+            if (!(KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) && !(KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN))) {
+                if (momentumY > 0) {
+                    momentumY -= 0.5;
+                }
+                if (momentumY < 0) {
+                    momentumY += 0.5;
+                }
+            }
+
+            if (!(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
+                if (momentumX > 0) {
+                    momentumX -= 0.5;
+                }
+                if (momentumX < 0) {
+                    momentumX += 0.5;
+                }
+            }
+
+
+
+            moveX = moveX + (int)momentumX;
+            moveY = moveY + (int)momentumY;
+
+            distFromCam = Math.sqrt(Math.pow(Math.abs(camX - moveX), 2) + Math.pow(Math.abs(camY - moveY), 2));
+            distCamX = moveX - camX;
+            distCamY = moveY - camY;
+
+            System.out.println(distFromCam);
+
+
+
+            camX = (camX + (int)momentumX) + (int)(distCamX * 1.9);
+            camY = (camY + (int)momentumY) + (int)(distCamY * 1.9);
+
+            LevelEditorScene.trackCamera(camX, camY);
+            LevelEditorScene.moveCharacter(moveX, moveY);
 
             glfwSwapBuffers(glfwWindow);
 
