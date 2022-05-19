@@ -1,6 +1,6 @@
 package components;
 
-import kelly.Component;
+import jade.Component;
 
 public class FontRenderer extends Component {
 

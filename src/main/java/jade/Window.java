@@ -1,4 +1,4 @@
-package kelly;
+package jade;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -24,7 +24,7 @@ public class Window {
     private int moveY = 0;
     private double momentumX = 0;
     private double momentumY = 0;
-    private double playerAccel = 1.0;
+    private double playerAccel = 2.0;
     private double playerMaxSpeed = 10.0;
     private int camX = 0;
     private int camY = 0;
@@ -35,6 +35,11 @@ public class Window {
     private boolean yCamInBound = true;
     private boolean xMoveInBound = true;
     private boolean yMoveInBound = true;
+    private int enemX = -500;
+    private int enemY = -500;
+    private int cloudX = 500;
+    private int cloudY = 500;
+    private int inertia = 1;
 
 
     private Window() {
@@ -191,19 +196,19 @@ public class Window {
 
             if (!(KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) && !(KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN))) {
                 if (momentumY > 0) {
-                    momentumY -= 0.5;
+                    momentumY -= inertia;
                 }
                 if (momentumY < 0) {
-                    momentumY += 0.5;
+                    momentumY += inertia;
                 }
             }
 
             if (!(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
                 if (momentumX > 0) {
-                    momentumX -= 0.5;
+                    momentumX -= inertia;
                 }
                 if (momentumX < 0) {
-                    momentumX += 0.5;
+                    momentumX += inertia;
                 }
             }
 
@@ -284,9 +289,37 @@ public class Window {
             xMoveInBound = true;
             yMoveInBound = true;
 
+            if (moveX < enemX) {
+                enemX -= 3;
+            }
+            if (moveX > enemX) {
+                enemX += 3;
+            }
+
+            if (moveY < enemY) {
+                enemY -= 3;
+            }
+            if (moveY > enemY) {
+                enemY += 3;
+            }
+
+            // Cloud
+            if (cloudX > -2000){
+                cloudX--;
+            }
+            else{
+                cloudY = (int)(Math.random() * 1000 + 200);
+                cloudX = 1920;
+
+            }
+            System.out.println(enemX);
+            System.out.println(enemY);
+
 
             LevelEditorScene.trackCamera(camX, camY);
             LevelEditorScene.moveCharacter(moveX, moveY);
+            LevelEditorScene.moveEnemy(enemX, enemY);
+            LevelEditorScene.moveCloud(cloudX, cloudY);
 
             glfwSwapBuffers(glfwWindow);
 

@@ -1,4 +1,4 @@
-package kelly;
+package jade;
 
 import renderer.Renderer;
 
