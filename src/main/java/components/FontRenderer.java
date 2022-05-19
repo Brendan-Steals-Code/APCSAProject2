@@ -1,8 +1,6 @@
 package components;
 
-import jade.Component;
-
-import java.awt.font.FontRenderContext;
+import kelly.Component;
 
 public class FontRenderer extends Component {
 

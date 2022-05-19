@@ -1,4 +1,4 @@
-package jade;
+package kelly;
 
 public abstract class Component {
 

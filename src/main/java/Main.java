@@ -1,4 +1,4 @@
-import jade.Window;
+import kelly.Window;
 
 public class Main {
     public static void main(String[] args) {

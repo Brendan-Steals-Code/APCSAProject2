@@ -1,4 +1,4 @@
-package jade;
+package kelly;
 
 import org.joml.Vector2f;
 

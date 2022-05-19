@@ -1,4 +1,4 @@
-package jade;
+package kelly;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -31,8 +31,11 @@ public class Window {
     private double distFromCam = 0;
     private double distCamX = 0;
     private double distCamY = 0;
-    private double camMomX = 0;
-    private double camMomY = 0;
+    private boolean xCamInBound = true;
+    private boolean yCamInBound = true;
+    private boolean xMoveInBound = true;
+    private boolean yMoveInBound = true;
+
 
     private Window() {
         this.width = 1920;
@@ -205,9 +208,15 @@ public class Window {
             }
 
 
+            if(momentumX > 2) {
+                LevelEditorScene.charRunningRight();
+            } else if (momentumX < -2) {
+                LevelEditorScene.charRunningLeft();
+            } else {
+                LevelEditorScene.charStanding();
+            }
 
-            moveX = moveX + (int)momentumX;
-            moveY = moveY + (int)momentumY;
+
 
             distFromCam = Math.sqrt(Math.pow(Math.abs(camX - moveX), 2) + Math.pow(Math.abs(camY - moveY), 2));
             distCamX = moveX - camX;
@@ -216,9 +225,65 @@ public class Window {
             System.out.println(distFromCam);
 
 
+            if ((camX + (int)momentumX) + (int)(distCamX * 1.9) > 1000) {
+                camX = 1000;
+                xCamInBound = false;
+            }
 
-            camX = (camX + (int)momentumX) + (int)(distCamX * 1.9);
-            camY = (camY + (int)momentumY) + (int)(distCamY * 1.9);
+            if ((camY + (int)momentumY) + (int)(distCamY * 1.9) > 1000) {
+                camY = 1000;
+                yCamInBound = false;
+            }
+
+
+            if ((camX + (int)momentumX) + (int)(distCamX * 1.9) < -1000) {
+                camX = -1000;
+                xCamInBound = false;
+            }
+
+            if ((camY + (int)momentumY) + (int)(distCamY * 1.9) < -1000) {
+                camY = -1000;
+                yCamInBound = false;
+            }
+
+            if(xCamInBound) {
+                camX = (camX + (int)momentumX) + (int)(distCamX * 1.9);
+            }
+            if(yCamInBound) {
+                camY = (camY + (int)momentumY) + (int)(distCamY * 1.9);
+            }
+            xCamInBound = true;
+            yCamInBound = true;
+
+
+
+            if (moveX + (int)momentumX > 1590) {
+                moveX = 1590;
+                xMoveInBound = false;
+            }
+            if (moveX + (int)momentumX < -1580) {
+                moveX = -1580;
+                xMoveInBound = false;
+            }
+
+            if (moveY + (int)momentumY > 1280) {
+                moveY = 1280;
+                yMoveInBound = false;
+            }
+            if (moveY + (int)momentumY < -1240) {
+                moveY = -1240;
+                yMoveInBound = false;
+            }
+
+            if(xMoveInBound) {
+                moveX = moveX + (int)momentumX;
+            }
+            if(yMoveInBound) {
+                moveY = moveY + (int)momentumY;
+            }
+            xMoveInBound = true;
+            yMoveInBound = true;
+
 
             LevelEditorScene.trackCamera(camX, camY);
             LevelEditorScene.moveCharacter(moveX, moveY);

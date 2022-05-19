@@ -1,14 +1,10 @@
-package jade;
+package kelly;
 
 import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import util.AssetPool;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class LevelEditorScene extends Scene {
 
@@ -18,6 +14,7 @@ public class LevelEditorScene extends Scene {
     private static int charYVal = 100;
     private static int camXVal = -570;
     private static int camYVal = -260;
+    private static String charRunning = "standing";
 
     public LevelEditorScene() {
 
@@ -32,10 +29,10 @@ public class LevelEditorScene extends Scene {
         sprites = AssetPool.getSpritesheet("assets/images/spritesheet.png");
 
         obj1 = new GameObject("Object 1", new Transform(new Vector2f(charXVal, charYVal), new Vector2f(150, 150)), 3);
-        obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
+        obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/testImage.png"))));
 
 
-        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(camXVal, camYVal), new Vector2f(2560, 2560)), 3);
+        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-2500, -2500), new Vector2f(5000, 5000)), 3);
         obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/villager1.png"))));
 
         this.addGameObjectToScene(obj2);
@@ -61,8 +58,31 @@ public class LevelEditorScene extends Scene {
         camYVal = y - 240;
     }
 
+    public static void charRunningRight() {
+        charRunning = "right";
+    }
+    public static void charRunningLeft() {
+        charRunning = "left";
+    }
+    public static void charStanding() {
+        charRunning = "standing";
+    }
+
     @Override
     public void update(float dt) {
+
+        if(charRunning == "right") {
+            System.out.println("right");
+            obj1.removeComponent(SpriteRenderer.class);
+        }
+        if(charRunning == "standing") {
+            System.out.println("standing");
+//            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
+        }
+        if(charRunning == "left") {
+            System.out.println("left");
+//            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/MarioLeft.png"))));
+        }
 
         obj1.transform.position = new Vector2f(charXVal, charYVal);
         camera.position = new Vector2f(camXVal, camYVal);
