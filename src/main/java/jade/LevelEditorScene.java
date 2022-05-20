@@ -30,9 +30,10 @@ public class LevelEditorScene extends Scene {
     private static int cloud2Y = 500;
     private static int rightCounter = 0;
     private static String charRunning = "standing";
-    private static Texture charSprtShtTexture = new Texture("assets/images/WalkSpriteSheet.png");
-    private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 20, 32, 4, 0);
+    private static Texture charSprtShtTexture = new Texture("assets/images/spritesheet.png");
+    private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 16, 16, 28, 0);
     private static int charSpriteIndex = 0;
+    private static boolean charHit = false;
 
     public LevelEditorScene() {
 
@@ -109,6 +110,14 @@ public class LevelEditorScene extends Scene {
         cloud2Y = y;
     }
 
+    public static void hitChar() {
+        charHit = true;
+    }
+
+    public static void unhitChar() {
+        charHit = false;
+    }
+
     public static void charRunningRight() {
         charRunning = "right";
     }
@@ -124,7 +133,7 @@ public class LevelEditorScene extends Scene {
 
         if(charRunning == "right") {
 //            System.out.println("right");
-            rightCounter += 20;
+            rightCounter += 15;
             if (rightCounter < 100) {
                 charSpriteIndex = 1;
             } else if (rightCounter < 200) {
@@ -134,19 +143,25 @@ public class LevelEditorScene extends Scene {
             } else {
                 rightCounter = 0;
             }
+            if (charHit) {
+                charSpriteIndex = 18;
+            }
             obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
         if(charRunning == "standing") {
 //            System.out.println("standing");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
             charSpriteIndex = 0;
+            if (charHit) {
+                charSpriteIndex = 18;
+            }
             obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
         if(charRunning == "left") {
 //            System.out.println("left");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/MarioLeft.png"))));
 //            obj1.getComponent(SpriteRenderer.class).flipSprite();
-            rightCounter += 20;
+            rightCounter += 15;
             if (rightCounter < 100) {
                 charSpriteIndex = 1;
             } else if (rightCounter < 200) {
@@ -155,6 +170,9 @@ public class LevelEditorScene extends Scene {
                 charSpriteIndex = 3;
             } else {
                 rightCounter = 0;
+            }
+            if (charHit) {
+                charSpriteIndex = 18;
             }
             obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }

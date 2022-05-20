@@ -367,12 +367,20 @@ public class Window {
                 if(eCounter % 100 == 0) {
                     System.out.println("Enemy in range");
                 }
+                LevelEditorScene.hitChar();
+            } else {
+                LevelEditorScene.unhitChar();
             }
 
 //            System.out.println("enemyX: " + enemX);
 //            System.out.println("enemyY: " + enemY);
 //            System.out.println("moveX: " + moveX);
 //            System.out.println("moveY: " + moveY);
+
+//            if (enemX < )
+
+//            if ()
+
 
 
             LevelEditorScene.trackCamera(camX, camY);
