@@ -4,6 +4,7 @@ import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
 import org.joml.Vector2f;
+import renderer.Texture;
 import util.AssetPool;
 
 public class LevelEditorScene extends Scene {
@@ -27,6 +28,9 @@ public class LevelEditorScene extends Scene {
     private static int cloud2X = 1200;
     private static int cloud2Y = 500;
     private static String charRunning = "standing";
+    private static Texture charSprtShtTexture = new Texture("assets/images/spritesheet.png");
+    private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 16, 16, 28, 16);
+    private static int charSpriteIndex = 0;
 
     public LevelEditorScene() {
 
@@ -40,8 +44,8 @@ public class LevelEditorScene extends Scene {
 
         sprites = AssetPool.getSpritesheet("assets/images/spritesheet.png");
 
-        obj1 = new GameObject("Object 1", new Transform(new Vector2f(charXVal, charYVal), new Vector2f(150, 220)), 3);
-        obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/Idle1Fixed.png"))));
+        obj1 = new GameObject("Object 1", new Transform(new Vector2f(charXVal, charYVal), new Vector2f(150, 150)), 3);
+        obj1.addComponent(new SpriteRenderer(charAnim.getSprite(charSpriteIndex)));
 
 
         GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-1560, -1500), new Vector2f(3280, 3050)), 3);
@@ -118,15 +122,20 @@ public class LevelEditorScene extends Scene {
 
         if(charRunning == "right") {
 //            System.out.println("right");
-
+            charSpriteIndex = 1;
+            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
         if(charRunning == "standing") {
 //            System.out.println("standing");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
+            charSpriteIndex = 0;
+            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
         if(charRunning == "left") {
 //            System.out.println("left");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/MarioLeft.png"))));
+            charSpriteIndex = 2;
+            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
 
 //        obj3.transform.position = new Vector2f(charXVal, charYVal);
