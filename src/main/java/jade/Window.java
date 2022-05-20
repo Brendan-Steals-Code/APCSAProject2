@@ -39,7 +39,16 @@ public class Window {
     private int enemY = -500;
     private int cloudX = 500;
     private int cloudY = 500;
+    private int cloud1X =-1200;
+    private int cloud1Y = -1200;
+    private int cloud2X = 1200;
+    private int cloud2Y = -500;
     private int inertia = 1;
+    private int eCounter = 0;
+    private double enemXDist;
+    private double enemYDist;
+    private double xEnemSlope;
+    private double yEnemSlope;
 
 
     private Window() {
@@ -227,8 +236,10 @@ public class Window {
             distCamX = moveX - camX;
             distCamY = moveY - camY;
 
-            System.out.println(distFromCam);
+//            System.out.println(distFromCam);
 
+
+//            + (int)(distCamX * 1.9) > 1000
 
             if ((camX + (int)momentumX) + (int)(distCamX * 1.9) > 1000) {
                 camX = 1000;
@@ -262,17 +273,17 @@ public class Window {
 
 
 
-            if (moveX + (int)momentumX > 1590) {
-                moveX = 1590;
+            if (moveX + (int)momentumX > 1570) {
+                moveX = 1570;
                 xMoveInBound = false;
             }
-            if (moveX + (int)momentumX < -1580) {
-                moveX = -1580;
+            if (moveX + (int)momentumX < -1620) {
+                moveX = -1620;
                 xMoveInBound = false;
             }
 
-            if (moveY + (int)momentumY > 1280) {
-                moveY = 1280;
+            if (moveY + (int)momentumY > 1300) {
+                moveY = 1300;
                 yMoveInBound = false;
             }
             if (moveY + (int)momentumY < -1240) {
@@ -289,6 +300,29 @@ public class Window {
             xMoveInBound = true;
             yMoveInBound = true;
 
+//            enemXDist = moveX - enemX;
+//            enemYDist = moveY - enemY;
+//            xEnemSlope = enemYDist/enemXDist;
+//            yEnemSlope = enemXDist/enemYDist;
+//            System.out.println(xEnemSlope);
+//
+//            if (xEnemSlope < 1 && xEnemSlope > -1) {
+//                System.out.println("X slope");
+//                if (enemX > moveX) {
+//                    enemX += yEnemSlope;
+//                    enemY += -(xEnemSlope);
+//                } else {
+//                    enemX += 1;
+//                    enemY += xEnemSlope;
+//                }
+//            } else {
+//                System.out.println("Y slope");
+//                if (enemY > moveY) {
+//
+//                }
+//            }
+
+
             if (moveX < enemX) {
                 enemX -= 3;
             }
@@ -304,22 +338,51 @@ public class Window {
             }
 
             // Cloud
-            if (cloudX > -2000){
+            if (cloudX > -2300){
                 cloudX--;
             }
             else{
-                cloudY = (int)(Math.random() * 1000 + 200);
+                cloudY = (int)(Math.random() * 2000 - 1200);
                 cloudX = 1920;
-
             }
-            System.out.println(enemX);
-            System.out.println(enemY);
+
+            if (cloud1X > -2300){
+                cloud1X--;
+            }
+            else{
+                cloud1Y = (int)(Math.random() * 2000 - 1200);
+                cloud1X = 1920;
+            }
+
+            if (cloud2X > -2300){
+                cloud2X--;
+            }
+            else{
+                cloud2Y = (int)(Math.random() * 2000 - 1200);
+                cloud2X = 1920;
+            }
+
+            if ((enemX < moveX + 100 && enemX > moveX - 100) && (enemY < moveY + 100 && enemX > moveY - 100)) {
+                eCounter++;
+                if(eCounter % 100 == 0) {
+                    System.out.println("Enemy in range");
+                }
+            }
+
+//            System.out.println("enemyX: " + enemX);
+//            System.out.println("enemyY: " + enemY);
+//            System.out.println("moveX: " + moveX);
+//            System.out.println("moveY: " + moveY);
 
 
             LevelEditorScene.trackCamera(camX, camY);
             LevelEditorScene.moveCharacter(moveX, moveY);
             LevelEditorScene.moveEnemy(enemX, enemY);
+
             LevelEditorScene.moveCloud(cloudX, cloudY);
+            LevelEditorScene.moveCloud1(cloud1X, cloud1Y);
+            LevelEditorScene.moveCloud2(cloud2X, cloud2Y);
+
 
             glfwSwapBuffers(glfwWindow);
 

@@ -11,6 +11,8 @@ public class LevelEditorScene extends Scene {
     public GameObject obj1;
     public GameObject obj3;
     public GameObject cloud;
+    public GameObject cloud1;
+    public GameObject cloud2;
     private Spritesheet sprites;
     private static int charXVal = 100;
     private static int charYVal = 100;
@@ -18,8 +20,12 @@ public class LevelEditorScene extends Scene {
     private static int camYVal = -260;
     private static int enemyXVal = -500;
     private static int enemyYVal = -500;
-    private static int cloudX = -500;
-    private static int cloudY = -500;
+    private static int cloudX = 500;
+    private static int cloudY = 500;
+    private static int cloud1X = -1000;
+    private static int cloud1Y = -1000;
+    private static int cloud2X = 1200;
+    private static int cloud2Y = 500;
     private static String charRunning = "standing";
 
     public LevelEditorScene() {
@@ -38,19 +44,27 @@ public class LevelEditorScene extends Scene {
         obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/Idle1Fixed.png"))));
 
 
-        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-1000, -1000), new Vector2f(2500, 2500)), 3);
+        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-1560, -1500), new Vector2f(3280, 3050)), 3);
         obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/grass.png"))));
 
         obj3 = new GameObject("Object 3", new Transform(new Vector2f(enemyXVal, enemyYVal), new Vector2f(100, 100)), 3);
         obj3.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/testImage2.png"))));
 
-        cloud = new GameObject("Cloud", new Transform(new Vector2f(cloudX, cloudY), new Vector2f(800, 800)), 3);
+        cloud = new GameObject("Cloud", new Transform(new Vector2f(cloudX, cloudY), new Vector2f(-650, 700)), 3);
         cloud.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
+
+        cloud1 = new GameObject("Cloud1", new Transform(new Vector2f(cloud1X, cloud1Y), new Vector2f(700, 650)), 3);
+        cloud1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
+
+        cloud2 = new GameObject("Cloud2", new Transform(new Vector2f(cloud2X, cloud2Y), new Vector2f(500, 550)), 3);
+        cloud2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
 
         this.addGameObjectToScene(obj2);
         this.addGameObjectToScene(obj3);
         this.addGameObjectToScene(obj1);
         this.addGameObjectToScene(cloud);
+        this.addGameObjectToScene(cloud1);
+        this.addGameObjectToScene(cloud2);
     }
 
     private void loadResources() {
@@ -80,6 +94,14 @@ public class LevelEditorScene extends Scene {
         cloudX = x;
         cloudY = y;
     }
+    public static void moveCloud1(int x, int y) {
+        cloud1X = x;
+        cloud1Y = y;
+    }
+    public static void moveCloud2(int x, int y) {
+        cloud2X = x;
+        cloud2Y = y;
+    }
 
     public static void charRunningRight() {
         charRunning = "right";
@@ -95,15 +117,15 @@ public class LevelEditorScene extends Scene {
     public void update(float dt) {
 
         if(charRunning == "right") {
-            System.out.println("right");
+//            System.out.println("right");
 
         }
         if(charRunning == "standing") {
-            System.out.println("standing");
+//            System.out.println("standing");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
         }
         if(charRunning == "left") {
-            System.out.println("left");
+//            System.out.println("left");
 //            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/MarioLeft.png"))));
         }
 
@@ -127,6 +149,12 @@ public class LevelEditorScene extends Scene {
             }
             if (go.equals(cloud)) {
                 go.transform.position = new Vector2f(cloudX, cloudY);
+            }
+            if (go.equals(cloud1)) {
+                go.transform.position = new Vector2f(cloud1X, cloud1Y);
+            }
+            if (go.equals(cloud2)) {
+                go.transform.position = new Vector2f(cloud2X, cloud2Y);
             }
 
         }
