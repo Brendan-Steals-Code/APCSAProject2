@@ -50,6 +50,9 @@ public class SpriteRenderer extends Component {
     public Vector2f[] getTexCoords() {
         return sprite.getTexCoords();
     }
+    public void flipSprite() {
+        sprite.flipTexCoords();
+    }
 
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;

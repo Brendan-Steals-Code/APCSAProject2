@@ -28,6 +28,16 @@ public class Sprite {
         return this.texture;
     }
 
+    public void flipTexCoords() {
+        Vector2f[] texCoords = {
+                new Vector2f(0, 1),
+                new Vector2f(0, 0),
+                new Vector2f(1, 0),
+                new Vector2f(1, 1)
+        };
+        this.texCoords = texCoords;
+    }
+
     public Vector2f[] getTexCoords() {
         return this.texCoords;
     }
