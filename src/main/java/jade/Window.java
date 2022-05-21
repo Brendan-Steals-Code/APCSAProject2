@@ -53,6 +53,9 @@ public class Window {
     private double yEnemSlope;
     private int swingCool = 100000;
 
+    private int mouseRelCharY = 0;
+    private int mouseRelCharX = 0;
+
 
     private Window() {
         this.width = 1920;
@@ -246,15 +249,50 @@ public class Window {
                 swingCool++;
             }
 
-            if (MouseListener.mouseButtonDown(0) && swingCool > 50) {
-                LevelEditorScene.swingSword();
-                swingCool = 0;
-            }
-
-
             distFromCam = Math.sqrt(Math.pow(Math.abs(camX - moveX), 2) + Math.pow(Math.abs(camY - moveY), 2));
             distCamX = moveX - camX;
             distCamY = moveY - camY;
+
+            mouseRelCharY = (int)(MouseListener.getY() + distCamY) - 572;
+            mouseRelCharX = (int)(MouseListener.getX() + distCamX) - 904;
+
+//            System.out.println("Y: " + mouseRelCharY);
+//            System.out.println("X: " + mouseRelCharX);
+// 573, 920
+            if(MouseListener.mouseButtonDown(0) && swingCool > 40) {
+                if ((MouseListener.getY() + distCamY >= 773) && (MouseListener.getX() + distCamX < 920)) {
+                    LevelEditorScene.swingSword("botLeft");
+                    swingCool = 0;
+                    System.out.println("botLeft");
+                }
+                if ((MouseListener.getY() + distCamY < 373) && (MouseListener.getX() + distCamX < 920)) {
+                    LevelEditorScene.swingSword("topLeft");
+                    swingCool = 0;
+                    System.out.println("topLeft");
+                }
+                if ((MouseListener.getY() + distCamY > 373) && (MouseListener.getY() + distCamY <= 773) && (MouseListener.getX() + distCamX < 920)) {
+                    LevelEditorScene.swingSword("left");
+                    swingCool = 0;
+                    System.out.println("left");
+                }
+                if ((MouseListener.getY() + distCamY > 373) && (MouseListener.getY() + distCamY <= 773) && (MouseListener.getX() + distCamX >= 920)) {
+                    LevelEditorScene.swingSword("right");
+                    swingCool = 0;
+                    System.out.println("right");
+                }
+                if ((MouseListener.getY() + distCamY >= 773) && (MouseListener.getX() + distCamX >= 920)) {
+                    LevelEditorScene.swingSword("botRight");
+                    swingCool = 0;
+                    System.out.println("botRight");
+                }
+                if ((MouseListener.getY() + distCamY < 373) && (MouseListener.getX() + distCamX >= 920)) {
+                    LevelEditorScene.swingSword("topRight");
+                    swingCool = 0;
+                    System.out.println("topRight");
+                }
+            }
+
+
 
 //            System.out.println(distFromCam);
 
@@ -387,7 +425,7 @@ public class Window {
             if ((enemX < moveX + 100 && enemX > moveX - 100) && (enemY < moveY + 100 && enemY > moveY - 100)) {
                 eCounter++;
                 if(eCounter % 100 == 0) {
-                    System.out.println("Enemy in range");
+//                    System.out.println("Enemy in range");
                 }
                 LevelEditorScene.hitChar();
             } else {
