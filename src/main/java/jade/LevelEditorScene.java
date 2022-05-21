@@ -41,7 +41,7 @@ public class LevelEditorScene extends Scene {
     private static boolean charVerticle = false;
 
     private static Texture swordSwingShtTexture = new Texture("assets/images/slash.png");
-    private static Spritesheet swingAnim = new Spritesheet(swordSwingShtTexture, 210, 210, 14, 1);
+    private static Spritesheet swingAnim = new Spritesheet(swordSwingShtTexture, 330, 211, 24, 0);
     private static int swingSpriteIndex = 13;
     private static boolean swinging = false;
     private static boolean swinging1 = false;
@@ -86,10 +86,11 @@ public class LevelEditorScene extends Scene {
         this.addGameObjectToScene(obj2);
         this.addGameObjectToScene(obj3);
         this.addGameObjectToScene(obj1);
+        this.addGameObjectToScene(swing);
         this.addGameObjectToScene(cloud);
         this.addGameObjectToScene(cloud1);
         this.addGameObjectToScene(cloud2);
-        this.addGameObjectToScene(swing);
+
     }
 
     private void loadResources() {
@@ -222,7 +223,7 @@ public class LevelEditorScene extends Scene {
 
         if (swinging) {
             System.out.println("swinging");
-            swingCounter += 50;
+            swingCounter += 40;
             if (swingCounter < 100) {
                 swingSpriteIndex = 0;
             } else if (swingCounter < 200) {
@@ -231,9 +232,9 @@ public class LevelEditorScene extends Scene {
                 swingSpriteIndex = 2;
             } else if (swingCounter < 400) {
                 swingSpriteIndex = 3;
-            } else if (swingCounter < 500){
+            } else if (swingCounter < 550){
                 swingSpriteIndex = 4;
-            } else if (swingCounter < 600) {
+            } else if (swingCounter < 700) {
                 swingSpriteIndex = 5;
             } else if (swingCounter < 20000) {
                 swingCounter = 0;
@@ -243,19 +244,17 @@ public class LevelEditorScene extends Scene {
         }
         if (swinging1) {
             System.out.println("swinging 1");
-            swingCounter += 50;
+            swingCounter += 40;
             if (swingCounter < 100) {
                 swingSpriteIndex = 6;
             } else if (swingCounter < 200) {
                 swingSpriteIndex = 7;
-            } else if (swingCounter < 300){
+            } else if (swingCounter < 350){
                 swingSpriteIndex = 8;
-            } else if (swingCounter < 400) {
+            } else if (swingCounter < 520) {
                 swingSpriteIndex = 9;
-            } else if (swingCounter < 500){
+            } else if (swingCounter < 700){
                 swingSpriteIndex = 10;
-            } else if (swingCounter < 600) {
-                swingSpriteIndex = 11;
             } else if (swingCounter < 20000) {
                 swingCounter = 0;
                 swinging1 = false;
@@ -296,30 +295,30 @@ public class LevelEditorScene extends Scene {
             if (go.equals(swing)) {
                 if (swingDir == "topLeft") {
                     go.transform.scale = new Vector2f(500, -500);
-                    go.transform.position = new Vector2f(charXVal - 200, charYVal + 390);
+                    go.transform.position = new Vector2f(charXVal - 150, charYVal + 390);
                 }
                 if (swingDir == "botLeft") {
                     go.transform.scale = new Vector2f(500, 500);
-                    go.transform.position = new Vector2f(charXVal - 160, charYVal - 190);
+                    go.transform.position = new Vector2f(charXVal - 160, charYVal - 250);
                 }
                 if (swingDir == "topRight") {
                     go.transform.scale = new Vector2f(-500, -500);
-                    go.transform.position = new Vector2f(charXVal + 310, charYVal + 370);
+                    go.transform.position = new Vector2f(charXVal + 260, charYVal + 390);
                 }
                 if (swingDir == "botRight") {
                     go.transform.scale = new Vector2f(-500, 500);
-                    go.transform.position = new Vector2f(charXVal + 310, charYVal - 220);
+                    go.transform.position = new Vector2f(charXVal + 280, charYVal - 270);
                 }
 
 
 
                 if (swingDir == "left") {
-                    go.transform.scale = new Vector2f(400, -400);
-                    go.transform.position = new Vector2f(charXVal - 280, charYVal + 280);
+                    go.transform.scale = new Vector2f(500, -400);
+                    go.transform.position = new Vector2f(charXVal - 380, charYVal + 290);
                 }
                 if (swingDir == "right") {
-                    go.transform.scale = new Vector2f(-400, -400);
-                    go.transform.position = new Vector2f(charXVal + 430, charYVal + 260);
+                    go.transform.scale = new Vector2f(-500, -400);
+                    go.transform.position = new Vector2f(charXVal + 530, charYVal + 290);
                 }
 
             }

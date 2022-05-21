@@ -56,6 +56,8 @@ public class Window {
     private int mouseRelCharY = 0;
     private int mouseRelCharX = 0;
 
+    private int midRange = 200;
+
 
     private Window() {
         this.width = 1920;
@@ -253,39 +255,41 @@ public class Window {
             distCamX = moveX - camX;
             distCamY = moveY - camY;
 
-            mouseRelCharY = (int)(MouseListener.getY() + distCamY) - 572;
-            mouseRelCharX = (int)(MouseListener.getX() + distCamX) - 904;
+            mouseRelCharX = (int)((MouseListener.getX() - 949) - (distCamX * 1.5));
+            mouseRelCharY = (int)((MouseListener.getY() - 579) + (distCamY * 1.5));
 
-//            System.out.println("Y: " + mouseRelCharY);
+//            System.out.println("X Without: " + MouseListener.getX());
+//            System.out.println("Y Without: " + MouseListener.getY());
 //            System.out.println("X: " + mouseRelCharX);
+            System.out.println("Y: " + mouseRelCharY);
 // 573, 920
             if(MouseListener.mouseButtonDown(0) && swingCool > 40) {
-                if ((MouseListener.getY() + distCamY >= 773) && (MouseListener.getX() + distCamX < 920)) {
+                if ((mouseRelCharY >= midRange) && (mouseRelCharX < 0)) {
                     LevelEditorScene.swingSword("botLeft");
                     swingCool = 0;
                     System.out.println("botLeft");
                 }
-                if ((MouseListener.getY() + distCamY < 373) && (MouseListener.getX() + distCamX < 920)) {
+                if ((mouseRelCharY < -midRange) && (mouseRelCharX < 0)) {
                     LevelEditorScene.swingSword("topLeft");
                     swingCool = 0;
                     System.out.println("topLeft");
                 }
-                if ((MouseListener.getY() + distCamY > 373) && (MouseListener.getY() + distCamY <= 773) && (MouseListener.getX() + distCamX < 920)) {
+                if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX < 0)) {
                     LevelEditorScene.swingSword("left");
                     swingCool = 0;
                     System.out.println("left");
                 }
-                if ((MouseListener.getY() + distCamY > 373) && (MouseListener.getY() + distCamY <= 773) && (MouseListener.getX() + distCamX >= 920)) {
+                if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX >= 0)) {
                     LevelEditorScene.swingSword("right");
                     swingCool = 0;
                     System.out.println("right");
                 }
-                if ((MouseListener.getY() + distCamY >= 773) && (MouseListener.getX() + distCamX >= 920)) {
+                if ((mouseRelCharY >= midRange) && (mouseRelCharX >= 0)) {
                     LevelEditorScene.swingSword("botRight");
                     swingCool = 0;
                     System.out.println("botRight");
                 }
-                if ((MouseListener.getY() + distCamY < 373) && (MouseListener.getX() + distCamX >= 920)) {
+                if ((mouseRelCharY < -midRange) && (mouseRelCharX >= 0)) {
                     LevelEditorScene.swingSword("topRight");
                     swingCool = 0;
                     System.out.println("topRight");
