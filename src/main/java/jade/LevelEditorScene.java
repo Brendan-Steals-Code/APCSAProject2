@@ -15,6 +15,7 @@ public class LevelEditorScene extends Scene {
     public GameObject cloud;
     public GameObject cloud1;
     public GameObject cloud2;
+    public GameObject swing;
     private Spritesheet sprites;
     private static int charXVal = 100;
     private static int charYVal = 100;
@@ -29,11 +30,21 @@ public class LevelEditorScene extends Scene {
     private static int cloud2X = 1200;
     private static int cloud2Y = 500;
     private static int rightCounter = 0;
+    private static int idleCounter = 0;
     private static String charRunning = "standing";
-    private static Texture charSprtShtTexture = new Texture("assets/images/spritesheet.png");
-    private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 16, 16, 28, 0);
+    private static Texture charSprtShtTexture = new Texture("assets/images/charAnim.png");
+    private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 18, 21, 16, 0);
     private static int charSpriteIndex = 0;
     private static boolean charHit = false;
+    private static String lastDir = "left";
+    private static boolean charVerticle = false;
+
+    private static Texture swordSwingShtTexture = new Texture("assets/images/swordSwing.png");
+    private static Spritesheet swingAnim = new Spritesheet(swordSwingShtTexture, 100, 300, 7, 0);
+    private static int swingSpriteIndex = 6;
+    private static boolean swinging = false;
+    private static int swingCounter = 0;
+
 
     public LevelEditorScene() {
 
@@ -66,12 +77,16 @@ public class LevelEditorScene extends Scene {
         cloud2 = new GameObject("Cloud2", new Transform(new Vector2f(cloud2X, cloud2Y), new Vector2f(500, 550)), 3);
         cloud2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
 
+        swing = new GameObject("Swing", new Transform(new Vector2f(charXVal, charYVal - 200), new Vector2f(300, 600)), 3);
+        swing.addComponent(new SpriteRenderer(swingAnim.getSprite(swingSpriteIndex)));
+
         this.addGameObjectToScene(obj2);
         this.addGameObjectToScene(obj3);
         this.addGameObjectToScene(obj1);
         this.addGameObjectToScene(cloud);
         this.addGameObjectToScene(cloud1);
         this.addGameObjectToScene(cloud2);
+        this.addGameObjectToScene(swing);
     }
 
     private void loadResources() {
@@ -127,40 +142,54 @@ public class LevelEditorScene extends Scene {
     public static void charStanding() {
         charRunning = "standing";
     }
+    public static void charVert() {
+        charVerticle = true;
+        charRunning = "verticle";
+    }
+    public static void charNotVert() {
+        charVerticle = false;
+    }
+    public static void lastSeen(String l) {lastDir = l;}
+
+
+    public static void swingSword() {
+        swinging = true;
+    }
+
+
 
     @Override
     public void update(float dt) {
 
         if(charRunning == "right") {
-//            System.out.println("right");
             rightCounter += 15;
             if (rightCounter < 100) {
-                charSpriteIndex = 1;
+                charSpriteIndex = 5;
             } else if (rightCounter < 200) {
-                charSpriteIndex = 2;
+                charSpriteIndex = 6;
             } else if (rightCounter < 300){
-                charSpriteIndex = 3;
+                charSpriteIndex = 7;
             } else {
                 rightCounter = 0;
             }
             if (charHit) {
-                charSpriteIndex = 18;
+                charSpriteIndex = 8;
             }
-            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
         if(charRunning == "standing") {
-//            System.out.println("standing");
-//            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/flushedDeepFried.png"))));
-            charSpriteIndex = 0;
-            if (charHit) {
-                charSpriteIndex = 18;
+            idleCounter += 5;
+            if (idleCounter < 100) {
+                charSpriteIndex = 0;
+            } else if (idleCounter < 300){
+                charSpriteIndex = 3;
+            } else {
+                idleCounter = 0;
             }
-            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
+            if (charHit) {
+                charSpriteIndex = 8;
+            }
         }
-        if(charRunning == "left") {
-//            System.out.println("left");
-//            obj1.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/MarioLeft.png"))));
-//            obj1.getComponent(SpriteRenderer.class).flipSprite();
+        if(charRunning == "left" || charVerticle) {
             rightCounter += 15;
             if (rightCounter < 100) {
                 charSpriteIndex = 1;
@@ -172,15 +201,45 @@ public class LevelEditorScene extends Scene {
                 rightCounter = 0;
             }
             if (charHit) {
-                charSpriteIndex = 18;
+                charSpriteIndex = 8;
             }
-            obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
         }
+        obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
 
 //        obj3.transform.position = new Vector2f(charXVal, charYVal);
 //
 //        obj1.transform.position = new Vector2f(charXVal, charYVal);
         camera.position = new Vector2f(camXVal, camYVal);
+
+
+        if (swinging) {
+            swingCounter += 50;
+            if (swingCounter < 100) {
+                swingSpriteIndex = 0;
+            } else if (swingCounter < 200) {
+                swingSpriteIndex = 1;
+            } else if (swingCounter < 300){
+                swingSpriteIndex = 2;
+            } else if (swingCounter < 400) {
+                swingSpriteIndex = 3;
+            } else if (swingCounter < 500){
+                swingSpriteIndex = 4;
+            } else if (swingCounter < 600) {
+                swingSpriteIndex = 5;
+            } else if (swingCounter < 20000) {
+                swingCounter = 0;
+                swinging = false;
+                swingSpriteIndex = 6;
+            }
+        }
+
+        swing.getComponent(SpriteRenderer.class).setSprite(swingAnim.getSprite(swingSpriteIndex));
+
+
+
+
+
+
 
         for (GameObject go : this.gameObjects) {
 //            System.out.println("X val: " + charXVal);
@@ -203,6 +262,9 @@ public class LevelEditorScene extends Scene {
             }
             if (go.equals(cloud2)) {
                 go.transform.position = new Vector2f(cloud2X, cloud2Y);
+            }
+            if (go.equals(swing)) {
+                go.transform.position = new Vector2f(charXVal, charYVal - 200);
             }
 
         }

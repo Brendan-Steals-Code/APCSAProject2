@@ -4,6 +4,8 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import java.util.logging.Level;
+
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -49,6 +51,7 @@ public class Window {
     private double enemYDist;
     private double xEnemSlope;
     private double yEnemSlope;
+    private int swingCool = 100000;
 
 
     private Window() {
@@ -179,30 +182,17 @@ public class Window {
                 b = Math.max(b + 0.05f, 0);
             }
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
-                if (momentumX > -playerMaxSpeed) {
-                    momentumX -= playerAccel;
-                }
-            }
-
-            if (KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
-                if (momentumX < playerMaxSpeed) {
-                    momentumX += playerAccel;
-                }
-            }
-
-            if (KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
-                if (momentumY > -playerMaxSpeed) {
-                    momentumY -= playerAccel;
-                }
-            }
 
             if (KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) {
                 if (momentumY < playerMaxSpeed) {
                     momentumY += playerAccel;
                 }
             }
-
+            if (KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
+                if (momentumX < playerMaxSpeed) {
+                    momentumX += playerAccel;
+                }
+            }
             if (!(KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) && !(KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN))) {
                 if (momentumY > 0) {
                     momentumY -= inertia;
@@ -212,6 +202,20 @@ public class Window {
                 }
             }
 
+
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
+                if (momentumX > -playerMaxSpeed) {
+                    momentumX -= playerAccel;
+                }
+                LevelEditorScene.lastSeen("left");
+            }
+            if (KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
+                if (momentumY > -playerMaxSpeed) {
+                    momentumY -= playerAccel;
+                }
+                LevelEditorScene.lastSeen("right");
+            }
             if (!(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
                 if (momentumX > 0) {
                     momentumX -= inertia;
@@ -222,14 +226,30 @@ public class Window {
             }
 
 
+
+
+
             if(momentumX > 2) {
                 LevelEditorScene.charRunningRight();
+                LevelEditorScene.charNotVert();
             } else if (momentumX < -2) {
                 LevelEditorScene.charRunningLeft();
+                LevelEditorScene.charNotVert();
+            } else if (momentumY > 2 || momentumY < -2){
+                LevelEditorScene.charVert();
             } else {
                 LevelEditorScene.charStanding();
+                LevelEditorScene.charNotVert();
             }
 
+            if (swingCool < 1000) {
+                swingCool++;
+            }
+
+            if (MouseListener.mouseButtonDown(0) && swingCool > 50) {
+                LevelEditorScene.swingSword();
+                swingCool = 0;
+            }
 
 
             distFromCam = Math.sqrt(Math.pow(Math.abs(camX - moveX), 2) + Math.pow(Math.abs(camY - moveY), 2));
@@ -361,8 +381,10 @@ public class Window {
                 cloud2Y = (int)(Math.random() * 2000 - 1200);
                 cloud2X = 1920;
             }
+//            System.out.println("In X range: " + (enemX < moveX + 100 && enemX > moveX - 100));
+//            System.out.println("In Y range: " + (enemY < moveY + 100 && enemX > moveY - 100));
 
-            if ((enemX < moveX + 100 && enemX > moveX - 100) && (enemY < moveY + 100 && enemX > moveY - 100)) {
+            if ((enemX < moveX + 100 && enemX > moveX - 100) && (enemY < moveY + 100 && enemY > moveY - 100)) {
                 eCounter++;
                 if(eCounter % 100 == 0) {
                     System.out.println("Enemy in range");
