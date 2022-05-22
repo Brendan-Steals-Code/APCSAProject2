@@ -1,5 +1,9 @@
 package jade;
 
+
+import java.io.File;
+import java.util.Collection;
+
 import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
@@ -99,6 +103,8 @@ public class LevelEditorScene extends Scene {
         AssetPool.addSpritesheet("assets/images/spritesheet.png",
                 new Spritesheet(AssetPool.getTexture("assets/images/spritesheet.png"),
                         16, 16, 26, 0));
+
+        AssetPool.addSound("assets/sounds/theme.ogg", true);
     }
 
     public static void moveCharacter(int x, int y) {

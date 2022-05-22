@@ -4,12 +4,16 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
-import java.util.logging.Level;
-
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
 
 public class Window {
     private int width, height;
@@ -59,6 +63,11 @@ public class Window {
     private int midRange = 200;
 
 
+    private long audioContext;
+    private long audioDevice;
+
+
+
     private Window() {
         this.width = 1920;
         this.height = 1080;
@@ -105,6 +114,11 @@ public class Window {
         init();
         loop();
 
+        alcDestroyContext(audioContext);
+        alcCloseDevice(audioDevice);
+
+
+
         // Free the memory
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);
@@ -147,6 +161,21 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(glfwWindow);
+
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        audioDevice = alcOpenDevice(defaultDeviceName);
+
+        int[] attributes = {0};
+        audioContext = alcCreateContext(audioDevice, attributes);
+        alcMakeContextCurrent(audioContext);
+
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
+        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+
+        if (!alCapabilities.OpenAL10) {
+            assert false : "Audio library not supported.";
+        }
+
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
