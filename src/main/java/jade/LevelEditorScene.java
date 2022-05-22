@@ -1,26 +1,24 @@
 package jade;
 
 
-import java.io.File;
 import java.util.Collection;
 
 import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 import renderer.Texture;
 import util.AssetPool;
 
 public class LevelEditorScene extends Scene {
 
     public GameObject obj1;
-    public GameObject obj3;
+    public GameObject slime;
     public GameObject cloud;
     public GameObject cloud1;
     public GameObject cloud2;
     public GameObject swing;
-    public GameObject swing1;
+    public GameObject bodySword;
     private Spritesheet sprites;
     private static int charXVal = 100;
     private static int charYVal = 100;
@@ -51,6 +49,27 @@ public class LevelEditorScene extends Scene {
     private static boolean swinging1 = false;
     private static int swingCounter = 0;
     private static String swingDir = "none";
+    private static boolean enemHit = false;
+
+    private static int bodySwordX = charXVal;
+    private static int bodySwordY = charYVal;
+    private static String enemDir = "right";
+    private static int enemCounter = 0;
+    private static int enHitCounter = 0;
+    private static int enemX = 0;
+    private static int enemY = 0;
+    private static int numEnemyHit = 0;
+    private static int enemyHitX;
+    private static int enemyHitY;
+    private static boolean enemyDead = false;
+    private static int enDeadCounter = 0;
+
+
+
+    private static Texture slimeShtTexture = new Texture("assets/images/slimeSprite.png");
+    private static Spritesheet slimeAnim = new Spritesheet(slimeShtTexture, 10, 20, 12, 0);
+    private static int slimeSpriteIndex = 0;
+
 
 
     public LevelEditorScene() {
@@ -72,8 +91,8 @@ public class LevelEditorScene extends Scene {
         GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-1560, -1500), new Vector2f(3280, 3050)), 3);
         obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/grass.png"))));
 
-        obj3 = new GameObject("Object 3", new Transform(new Vector2f(enemyXVal, enemyYVal), new Vector2f(100, 100)), 3);
-        obj3.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/testImage2.png"))));
+        slime = new GameObject("Object 3", new Transform(new Vector2f(enemyXVal, enemyYVal), new Vector2f(100, 100)), 3);
+        slime.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
 
         cloud = new GameObject("Cloud", new Transform(new Vector2f(cloudX, cloudY), new Vector2f(-650, 700)), 3);
         cloud.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
@@ -87,13 +106,18 @@ public class LevelEditorScene extends Scene {
         swing = new GameObject("Swing", new Transform(new Vector2f(charXVal - 400, charYVal - 200), new Vector2f(500, 500)), 3);
         swing.addComponent(new SpriteRenderer(swingAnim.getSprite(swingSpriteIndex)));
 
+        bodySword = new GameObject("Swing", new Transform(new Vector2f(bodySwordX, bodySwordY), new Vector2f(500, 500)), 3);
+        bodySword.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/bodySword.png"))));
+
         this.addGameObjectToScene(obj2);
-        this.addGameObjectToScene(obj3);
+        this.addGameObjectToScene(slime);
         this.addGameObjectToScene(obj1);
         this.addGameObjectToScene(swing);
+        this.addGameObjectToScene(bodySword);
         this.addGameObjectToScene(cloud);
         this.addGameObjectToScene(cloud1);
         this.addGameObjectToScene(cloud2);
+
 
     }
 
@@ -160,23 +184,79 @@ public class LevelEditorScene extends Scene {
         charVerticle = false;
     }
     public static void lastSeen(String l) {lastDir = l;}
+    
+    
+    public static void enemLeft() {
+        enemDir = "left";
+    }
+    public static void enemRight() {
+        enemDir = "right";
+    }
+    
+    
 
 
-    public static void swingSword(String dir) {
+    public static void swingSword(String dir, int enX, int enY) {
         swingDir = dir;
         if (swingDir == "botLeft" || swingDir == "topLeft" || swingDir == "topRight" || swingDir == "botRight") {
             swinging = true;
         } else {
             swinging1 = true;
         }
+
+        enemX = enX;
+        enemY = enY;
     }
 
+    public static void moveBodySword(){
+       // bodySwordX = charXVal;
+       // bodySwordY = charYVal;
+    }
 
 
     @Override
     public void update(float dt) {
+        if (swinging || swinging1) {
+            if (swingDir == "botLeft") {
+                if((enemX < charXVal + 60) && (enemX > charXVal - 270) && (enemY < charYVal + 100) && (enemY > charYVal - 270)) {
+                    enemHit = true;
+                }
+            }
+            if (swingDir == "left") {
+                if((enemX < charXVal + 20) && (enemX > charXVal - 300) && (enemY < charYVal + 230) && (enemY > charYVal - 230)) {
+                    enemHit = true;
+                }
+            }
+            if (swingDir == "topLeft") {
+                if((enemX < charXVal + 60) && (enemX > charXVal - 270) && (enemY < charYVal + 270) && (enemY > charYVal - 100)) {
+                    enemHit = true;
+                }
+            }
+            if (swingDir == "topRight") {
+                if((enemX < charXVal + 270) && (enemX > charXVal - 60) && (enemY < charYVal + 270) && (enemY > charYVal - 100)) {
+                    enemHit = true;
+                }
+            }
+            if (swingDir == "right") {
+                if((enemX < charXVal + 300) && (enemX > charXVal - 20) && (enemY < charYVal + 230) && (enemY > charYVal - 230)) {
+                    enemHit = true;
+                }
+            }
+            if (swingDir == "botRight") {
+                if((enemX < charXVal + 270) && (enemX > charXVal - 60) && (enemY < charYVal + 100) && (enemY > charYVal - 270)) {
+                    enemHit = true;
+                }
+            }
+        }
 
         if(charRunning == "right") {
+            if(!(swinging || swinging1)) {
+                bodySword.transform.scale = new Vector2f(250, 250);
+                bodySword.transform.position = new Vector2f(charXVal - 100, charYVal - 50);
+            } else {
+                bodySword.transform.scale = new Vector2f(0, 0);
+            }
+
             rightCounter += 15;
             if (rightCounter < 100) {
                 charSpriteIndex = 5;
@@ -192,6 +272,12 @@ public class LevelEditorScene extends Scene {
             }
         }
         if(charRunning == "standing") {
+            if(!(swinging || swinging1)) {
+                bodySword.transform.scale = new Vector2f(-250, 250);
+                bodySword.transform.position = new Vector2f(charXVal + 260, charYVal - 50);
+            } else {
+                bodySword.transform.scale = new Vector2f(0, 0);
+            }
             idleCounter += 3;
             if (idleCounter < 100) {
                 charSpriteIndex = 0;
@@ -205,6 +291,12 @@ public class LevelEditorScene extends Scene {
             }
         }
         if(charRunning == "left" || charVerticle) {
+            if(!(swinging || swinging1)) {
+                bodySword.transform.scale = new Vector2f(-250, 250);
+                bodySword.transform.position = new Vector2f(charXVal + 260, charYVal - 50);
+            } else {
+                bodySword.transform.scale = new Vector2f(0, 0);
+            }
             rightCounter += 15;
             if (rightCounter < 100) {
                 charSpriteIndex = 1;
@@ -269,7 +361,74 @@ public class LevelEditorScene extends Scene {
         }
 
         swing.getComponent(SpriteRenderer.class).setSprite(swingAnim.getSprite(swingSpriteIndex));
+        
+        
+        if (enemDir == "right") {
+            enemCounter += 5;
+            if (enemCounter < 100) {
+                slimeSpriteIndex = 1;
 
+            } else if (enemCounter < 200) {
+                slimeSpriteIndex = 0;
+            } else {
+                enemCounter = 0;
+            }
+        }
+        if (enemDir == "left") {
+            enemCounter += 5;
+            if (enemCounter < 100) {
+                slimeSpriteIndex = 2;
+
+            } else if (enemCounter < 200) {
+                slimeSpriteIndex = 3;
+            } else {
+                enemCounter = 0;
+            }
+        }
+
+
+        
+        
+
+
+        Collection<Sound> sounds = AssetPool.getAllSounds();
+        for (Sound sound : sounds) {
+            sound.play();
+        }
+
+        if (enemyDead) {
+            enDeadCounter += 1;
+            if(enDeadCounter < 30) {
+                slimeSpriteIndex = 4;
+            } else if (enDeadCounter < 60) {
+                slimeSpriteIndex = 5;
+            } else if (enDeadCounter < 90) {
+                slimeSpriteIndex = 6;
+            } else if (enDeadCounter < 120) {
+                slimeSpriteIndex = 7;
+            } else {
+                slimeSpriteIndex = 8;
+            }
+        }
+
+        if (enemHit) {
+            if (enHitCounter == 0) {
+                numEnemyHit += 1;
+            }
+            enemyHitX = enemyXVal;
+            enemyHitY = enemyYVal;
+
+
+            slime.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+            enHitCounter += 1;
+            if (enHitCounter > 20) {
+                enemHit = false;
+                enHitCounter = 0;
+            }
+
+        } else {
+            slime.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slimeSpriteIndex));
+        }
 
 
 
@@ -284,10 +443,14 @@ public class LevelEditorScene extends Scene {
                 go.transform.position = new Vector2f(charXVal, charYVal);
 
             }
-            if (go.equals(obj3)) {
-                go.transform.position = new Vector2f(enemyXVal, enemyYVal);
-//                System.out.println("en X: " + enemyXVal);
-//                System.out.println("en Y: " + enemyYVal);
+            if (go.equals(slime)) {
+                if (numEnemyHit > 3) {
+                    go.transform.position = new Vector2f(enemyHitX, enemyHitY);
+                    enemyDead = true;
+                    Window.enemyDead();
+                } else {
+                    go.transform.position = new Vector2f(enemyXVal, enemyYVal);
+                }
             }
             if (go.equals(cloud)) {
                 go.transform.position = new Vector2f(cloudX, cloudY);
@@ -327,9 +490,16 @@ public class LevelEditorScene extends Scene {
                     go.transform.position = new Vector2f(charXVal + 530, charYVal + 290);
                 }
 
-            }
 
+            }
+            if(go.equals(bodySword)){
+//                go.transform.position = new Vector2f(charXVal-100, charYVal-100);
+            }
+            if(go.equals(slime)) {
+//                go.
+            }
         }
+
 
         this.renderer.render();
     }

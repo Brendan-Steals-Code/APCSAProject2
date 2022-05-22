@@ -15,6 +15,8 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 
+import java.util.logging.Level;
+
 public class Window {
     private int width, height;
     private String title;
@@ -61,10 +63,20 @@ public class Window {
     private int mouseRelCharX = 0;
 
     private int midRange = 200;
+    private static boolean enemyDead = false;
 
 
     private long audioContext;
     private long audioDevice;
+
+    private int bodySwordX;
+    private int bodySwordY;
+
+    //private int bodySwordX = 500;
+
+    //private int bodySwordY = 500;
+
+//    private Sound theme = new Sound("assets/sounds/theme.ogg", true);
 
 
 
@@ -129,6 +141,7 @@ public class Window {
     }
 
     public void init() {
+//        theme.play();
         // Setup an error callback
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -188,6 +201,10 @@ public class Window {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         Window.changeScene(0);
+    }
+
+    public static void enemyDead() {
+        enemyDead = true;
     }
 
     public void loop() {
@@ -294,32 +311,32 @@ public class Window {
 // 573, 920
             if(MouseListener.mouseButtonDown(0) && swingCool > 40) {
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("botLeft");
+                    LevelEditorScene.swingSword("botLeft", enemX, enemY);
                     swingCool = 0;
                     System.out.println("botLeft");
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("topLeft");
+                    LevelEditorScene.swingSword("topLeft", enemX, enemY);
                     swingCool = 0;
                     System.out.println("topLeft");
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("left");
+                    LevelEditorScene.swingSword("left", enemX, enemY);
                     swingCool = 0;
                     System.out.println("left");
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("right");
+                    LevelEditorScene.swingSword("right", enemX, enemY);
                     swingCool = 0;
                     System.out.println("right");
                 }
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("botRight");
+                    LevelEditorScene.swingSword("botRight", enemX, enemY);
                     swingCool = 0;
                     System.out.println("botRight");
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("topRight");
+                    LevelEditorScene.swingSword("topRight", enemX, enemY);
                     swingCool = 0;
                     System.out.println("topRight");
                 }
@@ -413,19 +430,22 @@ public class Window {
 //                }
 //            }
 
+            if (!enemyDead) {
+                if (moveX < enemX) {
+                    enemX -= 3;
+                    LevelEditorScene.enemLeft();
+                }
+                if (moveX > enemX) {
+                    enemX += 3;
+                    LevelEditorScene.enemRight();
+                }
 
-            if (moveX < enemX) {
-                enemX -= 3;
-            }
-            if (moveX > enemX) {
-                enemX += 3;
-            }
-
-            if (moveY < enemY) {
-                enemY -= 3;
-            }
-            if (moveY > enemY) {
-                enemY += 3;
+                if (moveY < enemY) {
+                    enemY -= 3;
+                }
+                if (moveY > enemY) {
+                    enemY += 3;
+                }
             }
 
             // Cloud
@@ -484,12 +504,16 @@ public class Window {
             LevelEditorScene.moveCloud1(cloud1X, cloud1Y);
             LevelEditorScene.moveCloud2(cloud2X, cloud2Y);
 
+            //LevelEditorScene.moveBodySword();
+
 
             glfwSwapBuffers(glfwWindow);
 
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
+
+
         }
     }
 }
