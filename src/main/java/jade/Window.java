@@ -43,8 +43,6 @@ public class Window {
     private boolean yCamInBound = true;
     private boolean xMoveInBound = true;
     private boolean yMoveInBound = true;
-    private int enemX = -500;
-    private int enemY = -500;
     private int cloudX = 500;
     private int cloudY = 500;
     private int cloud1X =-1200;
@@ -53,32 +51,16 @@ public class Window {
     private int cloud2Y = -500;
     private int inertia = 1;
     private int eCounter = 0;
-    private double enemXDist;
-    private double enemYDist;
-    private double xEnemSlope;
-    private double yEnemSlope;
     private int swingCool = 100000;
 
     private int mouseRelCharY = 0;
     private int mouseRelCharX = 0;
 
     private int midRange = 200;
-    private static boolean enemyDead = false;
 
 
     private long audioContext;
     private long audioDevice;
-
-    private int bodySwordX;
-    private int bodySwordY;
-
-    //private int bodySwordX = 500;
-
-    //private int bodySwordY = 500;
-
-//    private Sound theme = new Sound("assets/sounds/theme.ogg", true);
-
-
 
     private Window() {
         this.width = 1920;
@@ -203,10 +185,6 @@ public class Window {
         Window.changeScene(0);
     }
 
-    public static void enemyDead() {
-        enemyDead = true;
-    }
-
     public void loop() {
         float beginTime = (float)glfwGetTime();
         float endTime;
@@ -234,17 +212,17 @@ public class Window {
             }
 
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) {
+            if (KeyListener.isKeyPressed(GLFW_KEY_R) || KeyListener.isKeyPressed(GLFW_KEY_UP)) {
                 if (momentumY < playerMaxSpeed) {
                     momentumY += playerAccel;
                 }
             }
-            if (KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
+            if (KeyListener.isKeyPressed(GLFW_KEY_G) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
                 if (momentumX < playerMaxSpeed) {
                     momentumX += playerAccel;
                 }
             }
-            if (!(KeyListener.isKeyPressed(GLFW_KEY_W) || KeyListener.isKeyPressed(GLFW_KEY_UP)) && !(KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN))) {
+            if (!(KeyListener.isKeyPressed(GLFW_KEY_R) || KeyListener.isKeyPressed(GLFW_KEY_UP)) && !(KeyListener.isKeyPressed(GLFW_KEY_F) || KeyListener.isKeyPressed(GLFW_KEY_DOWN))) {
                 if (momentumY > 0) {
                     momentumY -= inertia;
                 }
@@ -255,19 +233,19 @@ public class Window {
 
 
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
+            if (KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
                 if (momentumX > -playerMaxSpeed) {
                     momentumX -= playerAccel;
                 }
                 LevelEditorScene.lastSeen("left");
             }
-            if (KeyListener.isKeyPressed(GLFW_KEY_S) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
+            if (KeyListener.isKeyPressed(GLFW_KEY_F) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
                 if (momentumY > -playerMaxSpeed) {
                     momentumY -= playerAccel;
                 }
                 LevelEditorScene.lastSeen("right");
             }
-            if (!(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_A) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
+            if (!(KeyListener.isKeyPressed(GLFW_KEY_G) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
                 if (momentumX > 0) {
                     momentumX -= inertia;
                 }
@@ -304,48 +282,33 @@ public class Window {
             mouseRelCharX = (int)((MouseListener.getX() - 949) - (distCamX * 1.5));
             mouseRelCharY = (int)((MouseListener.getY() - 579) + (distCamY * 1.5));
 
-//            System.out.println("X Without: " + MouseListener.getX());
-//            System.out.println("Y Without: " + MouseListener.getY());
-//            System.out.println("X: " + mouseRelCharX);
-            System.out.println("Y: " + mouseRelCharY);
 // 573, 920
             if(MouseListener.mouseButtonDown(0) && swingCool > 40) {
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("botLeft", enemX, enemY);
+                    LevelEditorScene.swingSword("botLeft");
                     swingCool = 0;
-                    System.out.println("botLeft");
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("topLeft", enemX, enemY);
+                    LevelEditorScene.swingSword("topLeft");
                     swingCool = 0;
-                    System.out.println("topLeft");
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("left", enemX, enemY);
+                    LevelEditorScene.swingSword("left");
                     swingCool = 0;
-                    System.out.println("left");
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("right", enemX, enemY);
+                    LevelEditorScene.swingSword("right");
                     swingCool = 0;
-                    System.out.println("right");
                 }
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("botRight", enemX, enemY);
+                    LevelEditorScene.swingSword("botRight");
                     swingCool = 0;
-                    System.out.println("botRight");
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("topRight", enemX, enemY);
+                    LevelEditorScene.swingSword("topRight");
                     swingCool = 0;
-                    System.out.println("topRight");
                 }
             }
-
-
-
-//            System.out.println(distFromCam);
-
 
 //            + (int)(distCamX * 1.9) > 1000
 
@@ -371,10 +334,10 @@ public class Window {
             }
 
             if(xCamInBound) {
-                camX = (camX + (int)momentumX) + (int)(distCamX * 1.9);
+                camX = (camX + (int)momentumX);
             }
             if(yCamInBound) {
-                camY = (camY + (int)momentumY) + (int)(distCamY * 1.9);
+                camY = (camY + (int)momentumY);
             }
             xCamInBound = true;
             yCamInBound = true;
@@ -408,46 +371,6 @@ public class Window {
             xMoveInBound = true;
             yMoveInBound = true;
 
-//            enemXDist = moveX - enemX;
-//            enemYDist = moveY - enemY;
-//            xEnemSlope = enemYDist/enemXDist;
-//            yEnemSlope = enemXDist/enemYDist;
-//            System.out.println(xEnemSlope);
-//
-//            if (xEnemSlope < 1 && xEnemSlope > -1) {
-//                System.out.println("X slope");
-//                if (enemX > moveX) {
-//                    enemX += yEnemSlope;
-//                    enemY += -(xEnemSlope);
-//                } else {
-//                    enemX += 1;
-//                    enemY += xEnemSlope;
-//                }
-//            } else {
-//                System.out.println("Y slope");
-//                if (enemY > moveY) {
-//
-//                }
-//            }
-
-            if (!enemyDead) {
-                if (moveX < enemX) {
-                    enemX -= 3;
-                    LevelEditorScene.enemLeft();
-                }
-                if (moveX > enemX) {
-                    enemX += 3;
-                    LevelEditorScene.enemRight();
-                }
-
-                if (moveY < enemY) {
-                    enemY -= 3;
-                }
-                if (moveY > enemY) {
-                    enemY += 3;
-                }
-            }
-
             // Cloud
             if (cloudX > -2300){
                 cloudX--;
@@ -472,39 +395,13 @@ public class Window {
                 cloud2Y = (int)(Math.random() * 2000 - 1200);
                 cloud2X = 1920;
             }
-//            System.out.println("In X range: " + (enemX < moveX + 100 && enemX > moveX - 100));
-//            System.out.println("In Y range: " + (enemY < moveY + 100 && enemX > moveY - 100));
-
-            if ((enemX < moveX + 100 && enemX > moveX - 100) && (enemY < moveY + 100 && enemY > moveY - 100)) {
-                eCounter++;
-                if(eCounter % 100 == 0) {
-//                    System.out.println("Enemy in range");
-                }
-                LevelEditorScene.hitChar();
-            } else {
-                LevelEditorScene.unhitChar();
-            }
-
-//            System.out.println("enemyX: " + enemX);
-//            System.out.println("enemyY: " + enemY);
-//            System.out.println("moveX: " + moveX);
-//            System.out.println("moveY: " + moveY);
-
-//            if (enemX < )
-
-//            if ()
-
-
 
             LevelEditorScene.trackCamera(camX, camY);
             LevelEditorScene.moveCharacter(moveX, moveY);
-            LevelEditorScene.moveEnemy(enemX, enemY);
 
             LevelEditorScene.moveCloud(cloudX, cloudY);
             LevelEditorScene.moveCloud1(cloud1X, cloud1Y);
             LevelEditorScene.moveCloud2(cloud2X, cloud2Y);
-
-            //LevelEditorScene.moveBodySword();
 
 
             glfwSwapBuffers(glfwWindow);

@@ -1,31 +1,49 @@
 package jade;
 
 
+import java.io.File;
 import java.util.Collection;
+
+import org.joml.Vector2f;
+import util.AssetPool;
+
 
 import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
-import org.joml.Vector2f;
 import renderer.Texture;
-import util.AssetPool;
 
 public class LevelEditorScene extends Scene {
 
     public GameObject obj1;
-    public GameObject slime;
+    public GameObject heartContainers;
+    public GameObject slime1, slime2, slime3, slime4, slime5, slime6, slime7, slime8, slime9, slime10, slime11;
+    public Enemy en1 = new Enemy(300, 700, 4, 120, 1, 3.5);
+    public Enemy en2 = new Enemy(-1300, -700, 5, 125, 2, 5);
+    public Enemy en3 = new Enemy(3000, 700, 6, 130, 3, 6);
+    public Enemy en4 = new Enemy(-3000, -700, 7, 140, 4, 4);
+    public Enemy en5 = new Enemy(3300, -7000, 10, 160, 5, 3);
+    public Enemy en6 = new Enemy(-7000, 8000, 20, 200, 6, 2.5);
+    public Enemy en7 = new Enemy(-20000, 20000, 8, 120, 7, 4.5);
+    public Enemy en8 = new Enemy(-30000, -7000, 7, 140, 4, 3.2);
+    public Enemy en9 = new Enemy(33000, -70000, 10, 160, 5, 6.5);
+    public Enemy en10 = new Enemy(-40000, 40000, 20, 200, 6, 3.3);
+    public Enemy en11 = new Enemy(20000, -30000, 8, 120, 7, 4.8);
+
+    public Enemy[] enemyList = new Enemy[]{en1, en2, en3, en4, en5, en6, en7, en8, en9, en10, en11};
     public GameObject cloud;
     public GameObject cloud1;
     public GameObject cloud2;
     public GameObject swing;
     public GameObject bodySword;
+    public GameObject overText;
     private Spritesheet sprites;
     private static int charXVal = 100;
     private static int charYVal = 100;
     private static int camXVal = -570;
     private static int camYVal = -260;
-    private static int enemyXVal = -500;
-    private static int enemyYVal = -500;
+    private static int enemyXVal = -7000;
+    private static int enemyYVal = -7000;
     private static int cloudX = 500;
     private static int cloudY = 500;
     private static int cloud1X = -1000;
@@ -38,13 +56,18 @@ public class LevelEditorScene extends Scene {
     private static Texture charSprtShtTexture = new Texture("assets/images/charAnim.png");
     private static Spritesheet charAnim = new Spritesheet(charSprtShtTexture, 21, 21, 13, 0);
     private static int charSpriteIndex = 0;
-    private static boolean charHit = false;
     private static String lastDir = "left";
     private static boolean charVerticle = false;
+
+
+    private static Texture heartSprtShtTexture = new Texture("assets/images/heartContainer.png");
+    private static Spritesheet heartAnim = new Spritesheet(heartSprtShtTexture, 44, 8, 4, 0);
+    private static int heartSpriteIndex = 0;
 
     private static Texture swordSwingShtTexture = new Texture("assets/images/slash.png");
     private static Spritesheet swingAnim = new Spritesheet(swordSwingShtTexture, 330, 211, 24, 0);
     private static int swingSpriteIndex = 13;
+
     private static boolean swinging = false;
     private static boolean swinging1 = false;
     private static int swingCounter = 0;
@@ -63,6 +86,7 @@ public class LevelEditorScene extends Scene {
     private static int enemyHitY;
     private static boolean enemyDead = false;
     private static int enDeadCounter = 0;
+    private static Sound smack = new Sound("assets/sounds/smack.ogg", false);
 
 
 
@@ -71,6 +95,17 @@ public class LevelEditorScene extends Scene {
     private static int slimeSpriteIndex = 0;
 
 
+    private int charDamage;
+    private int heartIndex = 0;
+
+
+    private boolean charDead = false;
+    private int deadX;
+    private int deadY;
+    private int charDeadCounter;
+    private boolean alreadyDead = false;
+    private int deadCamX;
+    private int deadCamY;
 
     public LevelEditorScene() {
 
@@ -87,12 +122,35 @@ public class LevelEditorScene extends Scene {
         obj1 = new GameObject("Object 1", new Transform(new Vector2f(charXVal, charYVal), new Vector2f(150, 150)), 3);
         obj1.addComponent(new SpriteRenderer(charAnim.getSprite(charSpriteIndex)));
 
+        heartContainers = new GameObject("hearts", new Transform(new Vector2f(camXVal, camYVal), new Vector2f(440, 70)), 3);
+        heartContainers.addComponent(new SpriteRenderer(heartAnim.getSprite(0)));
+
 
         GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(-1560, -1500), new Vector2f(3280, 3050)), 3);
         obj2.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/grass.png"))));
 
-        slime = new GameObject("Object 3", new Transform(new Vector2f(enemyXVal, enemyYVal), new Vector2f(100, 100)), 3);
-        slime.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime1 = new GameObject("Object 3", new Transform(new Vector2f(en1.getX(), en1.getY()), new Vector2f(en1.getSize(), en1.getSize())), 3);
+        slime1.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime2 = new GameObject("Object 3", new Transform(new Vector2f(en2.getX(), en2.getY()), new Vector2f(en2.getSize(), en2.getSize())), 3);
+        slime2.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime3 = new GameObject("Object 3", new Transform(new Vector2f(en3.getX(), en3.getY()), new Vector2f(en3.getSize(), en3.getSize())), 3);
+        slime3.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime4 = new GameObject("Object 3", new Transform(new Vector2f(en4.getX(), en4.getY()), new Vector2f(en4.getSize(), en4.getSize())), 3);
+        slime4.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime5 = new GameObject("Object 3", new Transform(new Vector2f(en5.getX(), en5.getY()), new Vector2f(en5.getSize(), en5.getSize())), 3);
+        slime5.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime6 = new GameObject("Object 3", new Transform(new Vector2f(en6.getX(), en6.getY()), new Vector2f(en6.getSize(), en6.getSize())), 3);
+        slime6.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime7 = new GameObject("Object 3", new Transform(new Vector2f(en7.getX(), en7.getY()), new Vector2f(en7.getSize(), en7.getSize())), 3);
+        slime7.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime8 = new GameObject("Object 3", new Transform(new Vector2f(en8.getX(), en8.getY()), new Vector2f(en8.getSize(), en8.getSize())), 3);
+        slime8.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime9 = new GameObject("Object 3", new Transform(new Vector2f(en9.getX(), en9.getY()), new Vector2f(en9.getSize(), en9.getSize())), 3);
+        slime9.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime10 = new GameObject("Object 3", new Transform(new Vector2f(en10.getX(), en10.getY()), new Vector2f(en10.getSize(), en10.getSize())), 3);
+        slime10.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+        slime11 = new GameObject("Object 3", new Transform(new Vector2f(en11.getX(), en11.getY()), new Vector2f(en11.getSize(), en11.getSize())), 3);
+        slime11.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
 
         cloud = new GameObject("Cloud", new Transform(new Vector2f(cloudX, cloudY), new Vector2f(-650, 700)), 3);
         cloud.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/cloud.png"))));
@@ -109,14 +167,32 @@ public class LevelEditorScene extends Scene {
         bodySword = new GameObject("Swing", new Transform(new Vector2f(bodySwordX, bodySwordY), new Vector2f(500, 500)), 3);
         bodySword.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/bodySword.png"))));
 
+        overText = new GameObject("Swing", new Transform(new Vector2f(-350, 0), new Vector2f(900, 150)), 3);
+        overText.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/gameOver.png"))));
+
+
         this.addGameObjectToScene(obj2);
-        this.addGameObjectToScene(slime);
+        this.addGameObjectToScene(slime11);
+        this.addGameObjectToScene(slime10);
+        this.addGameObjectToScene(slime9);
+        this.addGameObjectToScene(slime8);
+        this.addGameObjectToScene(slime7);
+        this.addGameObjectToScene(slime6);
+        this.addGameObjectToScene(slime5);
+        this.addGameObjectToScene(slime4);
+        this.addGameObjectToScene(slime3);
+        this.addGameObjectToScene(slime2);
+        this.addGameObjectToScene(slime1);
         this.addGameObjectToScene(obj1);
         this.addGameObjectToScene(swing);
         this.addGameObjectToScene(bodySword);
         this.addGameObjectToScene(cloud);
         this.addGameObjectToScene(cloud1);
         this.addGameObjectToScene(cloud2);
+
+        this.addGameObjectToScene(heartContainers);
+
+
 
 
     }
@@ -129,16 +205,13 @@ public class LevelEditorScene extends Scene {
                         16, 16, 26, 0));
 
         AssetPool.addSound("assets/sounds/theme.ogg", true);
+        AssetPool.addSound("assets/sounds/smack.ogg", false);
+        AssetPool.addSound("assets/sounds/lose.ogg", false);
     }
 
     public static void moveCharacter(int x, int y) {
         charXVal = x;
         charYVal = y;
-    }
-
-    public static void moveEnemy(int x, int y) {
-        enemyXVal = x;
-        enemyYVal = y;
     }
 
     public static void trackCamera(int x, int y) {
@@ -159,12 +232,13 @@ public class LevelEditorScene extends Scene {
         cloud2Y = y;
     }
 
-    public static void hitChar() {
-        charHit = true;
-    }
+    public boolean isHitChar() {
+        if (en1.getEnHitting() || en2.getEnHitting() || en3.getEnHitting() || en4.getEnHitting() || en5.getEnHitting() || en6.getEnHitting()) {
+            return true;
+        } else {
+            return false;
+        }
 
-    public static void unhitChar() {
-        charHit = false;
     }
 
     public static void charRunningRight() {
@@ -196,16 +270,13 @@ public class LevelEditorScene extends Scene {
     
 
 
-    public static void swingSword(String dir, int enX, int enY) {
+    public static void swingSword(String dir) {
         swingDir = dir;
         if (swingDir == "botLeft" || swingDir == "topLeft" || swingDir == "topRight" || swingDir == "botRight") {
             swinging = true;
         } else {
             swinging1 = true;
         }
-
-        enemX = enX;
-        enemY = enY;
     }
 
     public static void moveBodySword(){
@@ -216,35 +287,49 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        if (swinging || swinging1) {
-            if (swingDir == "botLeft") {
-                if((enemX < charXVal + 60) && (enemX > charXVal - 270) && (enemY < charYVal + 100) && (enemY > charYVal - 270)) {
-                    enemHit = true;
+        for (Enemy slime : enemyList) {
+            slime.getCharMove(charXVal, charYVal);
+            slime.updateEnemy();
+//            if(slime.getNum() == 1) {
+//                slime2.transform.position = new Vector2f(slime.getX(), slime.getY());
+//            }
+
+            if (swinging || swinging1) {
+                if (swingDir == "botLeft") {
+                    if((slime.getX() < charXVal + 60) && (slime.getX() > charXVal - 270) && (slime.getY() < charYVal + 100) && (slime.getY() > charYVal - 270)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
-            }
-            if (swingDir == "left") {
-                if((enemX < charXVal + 20) && (enemX > charXVal - 300) && (enemY < charYVal + 230) && (enemY > charYVal - 230)) {
-                    enemHit = true;
+                if (swingDir == "left") {
+                    if((slime.getX() < charXVal + 20) && (slime.getX() > charXVal - 300) && (slime.getY() < charYVal + 230) && (slime.getY() > charYVal - 230)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
-            }
-            if (swingDir == "topLeft") {
-                if((enemX < charXVal + 60) && (enemX > charXVal - 270) && (enemY < charYVal + 270) && (enemY > charYVal - 100)) {
-                    enemHit = true;
+                if (swingDir == "topLeft") {
+                    if((slime.getX() < charXVal + 60) && (slime.getX() > charXVal - 270) && (slime.getY() < charYVal + 270) && (slime.getY() > charYVal - 100)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
-            }
-            if (swingDir == "topRight") {
-                if((enemX < charXVal + 270) && (enemX > charXVal - 60) && (enemY < charYVal + 270) && (enemY > charYVal - 100)) {
-                    enemHit = true;
+                if (swingDir == "topRight") {
+                    if((slime.getX() < charXVal + 270) && (slime.getX() > charXVal - 60) && (slime.getY() < charYVal + 270) && (slime.getY() > charYVal - 100)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
-            }
-            if (swingDir == "right") {
-                if((enemX < charXVal + 300) && (enemX > charXVal - 20) && (enemY < charYVal + 230) && (enemY > charYVal - 230)) {
-                    enemHit = true;
+                if (swingDir == "right") {
+                    if((slime.getX() < charXVal + 300) && (slime.getX() > charXVal - 20) && (slime.getY() < charYVal + 230) && (slime.getY() > charYVal - 230)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
-            }
-            if (swingDir == "botRight") {
-                if((enemX < charXVal + 270) && (enemX > charXVal - 60) && (enemY < charYVal + 100) && (enemY > charYVal - 270)) {
-                    enemHit = true;
+                if (swingDir == "botRight") {
+                    if((slime.getX() < charXVal + 270) && (slime.getX() > charXVal - 60) && (slime.getY() < charYVal + 100) && (slime.getY() > charYVal - 270)) {
+//                        slime.gotHit();
+                        slime.getCharHit(true);
+                    }
                 }
             }
         }
@@ -267,8 +352,9 @@ public class LevelEditorScene extends Scene {
             } else {
                 rightCounter = 0;
             }
-            if (charHit) {
+            if (isHitChar()) {
                 charSpriteIndex = 4;
+                charDamage++;
             }
         }
         if(charRunning == "standing") {
@@ -286,8 +372,9 @@ public class LevelEditorScene extends Scene {
             } else {
                 idleCounter = 0;
             }
-            if (charHit) {
+            if (isHitChar()) {
                 charSpriteIndex = 4;
+                charDamage++;
             }
         }
         if(charRunning == "left" || charVerticle) {
@@ -307,20 +394,66 @@ public class LevelEditorScene extends Scene {
             } else {
                 rightCounter = 0;
             }
-            if (charHit) {
+            if (isHitChar()) {
                 charSpriteIndex = 4;
+                charDamage++;
             }
         }
+        System.out.println(charDamage);
         obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
 
-//        obj3.transform.position = new Vector2f(charXVal, charYVal);
-//
-//        obj1.transform.position = new Vector2f(charXVal, charYVal);
+        if (charDamage > 60) {
+            heartIndex = 1;
+        }
+        if (charDamage > 120) {
+            heartIndex = 2;
+        }
+        if (charDamage > 180) {
+            heartIndex = 3;
+            obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(6));
+            charDead = true;
+            deadX = charXVal;
+            deadY = charYVal;
+            deadCamX = camXVal;
+            deadCamY = camYVal;
+            charDamage = -99999;
+        }
+        heartContainers.getComponent(SpriteRenderer.class).setSprite(heartAnim.getSprite(heartIndex));
+
+
+
+        if (charDead) {
+            overText.transform.position = new Vector2f(0, 0);
+            bodySword.transform.position = new Vector2f(-3000, -3000);
+            charXVal = deadX;
+            charYVal = deadY;
+            camXVal = deadCamX;
+            camYVal = deadCamY;
+            swing.transform.position = new Vector2f(-3000, -3000);
+            charDeadCounter++;
+            if(charDeadCounter < 40) {
+                obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(5));
+            } else if (charDeadCounter < 80) {
+                obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(6));
+            } else if (charDeadCounter < 120) {
+                obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(7));
+            } else if (charDeadCounter < 160) {
+                obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(8));
+            } else {
+                obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(8));
+            }
+        }
+
+
+
+
+
+
+
         camera.position = new Vector2f(camXVal, camYVal);
 
 
         if (swinging) {
-            System.out.println("swinging");
             swingCounter += 40;
             if (swingCounter < 100) {
                 swingSpriteIndex = 0;
@@ -341,7 +474,6 @@ public class LevelEditorScene extends Scene {
             }
         }
         if (swinging1) {
-            System.out.println("swinging 1");
             swingCounter += 40;
             if (swingCounter < 100) {
                 swingSpriteIndex = 6;
@@ -361,29 +493,263 @@ public class LevelEditorScene extends Scene {
         }
 
         swing.getComponent(SpriteRenderer.class).setSprite(swingAnim.getSprite(swingSpriteIndex));
-        
-        
-        if (enemDir == "right") {
-            enemCounter += 5;
-            if (enemCounter < 100) {
-                slimeSpriteIndex = 1;
 
-            } else if (enemCounter < 200) {
-                slimeSpriteIndex = 0;
-            } else {
-                enemCounter = 0;
-            }
-        }
-        if (enemDir == "left") {
-            enemCounter += 5;
-            if (enemCounter < 100) {
-                slimeSpriteIndex = 2;
+        for (Enemy slime : enemyList) {
+            if (slime.getDir() == "right") {
+                slime.enemCounter += 5;
+                if (slime.enemCounter < 100) {
+                    slime.slimeSpriteIndex = 1;
 
-            } else if (enemCounter < 200) {
-                slimeSpriteIndex = 3;
-            } else {
-                enemCounter = 0;
+                } else if (slime.enemCounter < 200) {
+                    slime.slimeSpriteIndex = 0;
+                } else {
+                    slime.enemCounter = 0;
+                }
             }
+            if (slime.getDir() == "left") {
+                slime.enemCounter += 5;
+                if (slime.enemCounter < 100) {
+                    slime.slimeSpriteIndex = 2;
+
+                } else if (slime.enemCounter < 200) {
+                    slime.slimeSpriteIndex = 3;
+                } else {
+                    slime.enemCounter = 0;
+                }
+            }
+
+            if (slime.slimeHit) {
+                if (slime.enHitCounter == 0) {
+                    slime.gotHit();
+                    System.out.println("Slime: " + slime.getNum() + " -- IN HIT THING");
+                    slime.enHitCounter += 1;
+                }
+                slime.enemyHitX = slime.getX();
+                slime.enemyHitY = slime.getY();
+
+
+                if (slime.getNum() == 1) {
+                    slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 2) {
+                    slime2.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 3) {
+                    slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 4) {
+                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 5) {
+                    slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 6) {
+                    slime6.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 7) {
+                    slime7.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 8) {
+                    slime8.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 9) {
+                    slime9.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 10) {
+                    slime10.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                if (slime.getNum() == 11) {
+                    slime11.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+                }
+                slime.enHitCounter += 1;
+                if (slime.enHitCounter > 20) {
+                    slime.slimeHit = false;
+                    slime.enHitCounter = 0;
+                }
+            } else {
+                if (slime.getNum() == 1) {
+                    slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 2) {
+                    slime2.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 3) {
+                    slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 4) {
+                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 5) {
+                    slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 6) {
+                    slime6.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 7) {
+                    slime7.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 8) {
+                    slime8.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 9) {
+                    slime9.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 10) {
+                    slime10.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 11) {
+                    slime11.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+            }
+
+            if (slime.getHitVal() > slime.getHP()) {
+                if (slime.getNum() == 1) {
+                    slime1.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 2) {
+                    slime2.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 3) {
+                    slime3.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 4) {
+                    slime4.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 5) {
+                    slime5.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 6) {
+                    slime6.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 7) {
+                    slime7.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 8) {
+                    slime8.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 9) {
+                    slime9.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 10) {
+                    slime10.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                if (slime.getNum() == 11) {
+                    slime11.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+                }
+                slime.enemyDead = true;
+                slime.resetHit();
+
+            } else {
+                if (slime.getNum() == 1) {
+                    slime1.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 2) {
+                    slime2.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 3) {
+                    slime3.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 4) {
+                    slime4.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 5) {
+                    slime5.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 6) {
+                    slime6.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 7) {
+                    slime7.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 8) {
+                    slime8.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 9) {
+                    slime9.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 10) {
+                    slime10.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+                if (slime.getNum() == 11) {
+                    slime11.transform.position = new Vector2f(slime.getX(), slime.getY());
+                }
+            }
+//            if (slime.getNum() == 1) {
+//                slime1.transform.position = new Vector2f(slime.getX(), slime.getY());
+//                System.out.println("hit value: " + slime.hitVal + " -- slimeHit?: " + slime.slimeHit);
+//            }
+
+            if (slime.enemyDead) {
+                slime.slimeDeadCounter += 1;
+                if(slime.slimeDeadCounter < 30) {
+                    slime.slimeSpriteIndex = 4;
+                } else if (slime.slimeDeadCounter < 60) {
+                    slime.slimeSpriteIndex = 5;
+                } else if (slime.slimeDeadCounter < 90) {
+                    slime.slimeSpriteIndex = 6;
+                } else if (slime.slimeDeadCounter < 120) {
+                    slime.slimeSpriteIndex = 7;
+                } else {
+                    slime.slimeSpriteIndex = 8;
+                    slime.enemyGone();
+                    slime.slimeDeadCounter = 0;
+                }
+                if (slime.getNum() == 1) {
+                    slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 2) {
+                    slime2.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 3) {
+                    slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 4) {
+                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 5) {
+                    slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 6) {
+                    slime6.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 7) {
+                    slime7.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 8) {
+                    slime8.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 9) {
+                    slime9.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 10) {
+                    slime10.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+                if (slime.getNum() == 11) {
+                    slime11.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+                }
+
+            }
+
+//            if (enemHit) {
+//                if (enHitCounter == 0) {
+//                    numEnemyHit += 1;
+//                }
+//                enemyHitX = enemyXVal;
+//                enemyHitY = enemyYVal;
+//
+//
+//                slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+//                enHitCounter += 1;
+//                if (enHitCounter > 20) {
+//                    enemHit = false;
+//                    enHitCounter = 0;
+//                }
+//
+//            } else {
+//                slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slimeSpriteIndex));
+//            }
+
+
         }
 
 
@@ -393,42 +759,62 @@ public class LevelEditorScene extends Scene {
 
         Collection<Sound> sounds = AssetPool.getAllSounds();
         for (Sound sound : sounds) {
-            sound.play();
-        }
+            File tmp = new File(sound.getFilepath());
+            if (tmp.getName().equals("theme.ogg") && !(charDead)) {
+                sound.play();
+            }
 
-        if (enemyDead) {
-            enDeadCounter += 1;
-            if(enDeadCounter < 30) {
-                slimeSpriteIndex = 4;
-            } else if (enDeadCounter < 60) {
-                slimeSpriteIndex = 5;
-            } else if (enDeadCounter < 90) {
-                slimeSpriteIndex = 6;
-            } else if (enDeadCounter < 120) {
-                slimeSpriteIndex = 7;
-            } else {
-                slimeSpriteIndex = 8;
+            if ((swinging || swinging1) && (tmp.getName().equals("smack.ogg"))) {
+                sound.play();
+            }
+
+            if (charDead && tmp.getName().equals("lose.ogg") && !(alreadyDead)) {
+                sound.play();
+                System.out.println("DEAD AND SHOULD BE PLAYING");
+                alreadyDead = true;
+            }
+
+            if (tmp.getName().equals("theme.ogg") && charDead) {
+                sound.stop();
             }
         }
 
-        if (enemHit) {
-            if (enHitCounter == 0) {
-                numEnemyHit += 1;
-            }
-            enemyHitX = enemyXVal;
-            enemyHitY = enemyYVal;
+//        if (enemyDead) {
+//            enDeadCounter += 1;
+//            if(enDeadCounter < 30) {
+//                slimeSpriteIndex = 4;
+//            } else if (enDeadCounter < 60) {
+//                slimeSpriteIndex = 5;
+//            } else if (enDeadCounter < 90) {
+//                slimeSpriteIndex = 6;
+//            } else if (enDeadCounter < 120) {
+//                slimeSpriteIndex = 7;
+//            } else {
+//                slimeSpriteIndex = 8;
+////                Window.enemyGone();
+//                enemyDead = false;
+//                enDeadCounter = 0;
+//            }
+//        }
 
-
-            slime.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
-            enHitCounter += 1;
-            if (enHitCounter > 20) {
-                enemHit = false;
-                enHitCounter = 0;
-            }
-
-        } else {
-            slime.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slimeSpriteIndex));
-        }
+//        if (enemHit) {
+//            if (enHitCounter == 0) {
+//                numEnemyHit += 1;
+//            }
+//            enemyHitX = enemyXVal;
+//            enemyHitY = enemyYVal;
+//
+//
+//            slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+//            enHitCounter += 1;
+//            if (enHitCounter > 20) {
+//                enemHit = false;
+//                enHitCounter = 0;
+//            }
+//
+//        } else {
+//            slime1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slimeSpriteIndex));
+//        }
 
 
 
@@ -436,21 +822,16 @@ public class LevelEditorScene extends Scene {
 
 
         for (GameObject go : this.gameObjects) {
-//            System.out.println("X val: " + charXVal);
-//            System.out.println("Y val: " + charYVal);
             go.update(dt);
+            if (go.equals(heartContainers)) {
+                go.transform.position = new Vector2f(camXVal - 140, camYVal + 590);
+            }
             if (go.equals(obj1)) {
                 go.transform.position = new Vector2f(charXVal, charYVal);
 
             }
-            if (go.equals(slime)) {
-                if (numEnemyHit > 3) {
-                    go.transform.position = new Vector2f(enemyHitX, enemyHitY);
-                    enemyDead = true;
-                    Window.enemyDead();
-                } else {
-                    go.transform.position = new Vector2f(enemyXVal, enemyYVal);
-                }
+            if (go.equals(slime1)) {
+
             }
             if (go.equals(cloud)) {
                 go.transform.position = new Vector2f(cloudX, cloudY);
@@ -490,12 +871,16 @@ public class LevelEditorScene extends Scene {
                     go.transform.position = new Vector2f(charXVal + 530, charYVal + 290);
                 }
 
+                if (charDead) {
+                    go.transform.position = new Vector2f(-3000, -3000);
+                }
+
 
             }
             if(go.equals(bodySword)){
 //                go.transform.position = new Vector2f(charXVal-100, charYVal-100);
             }
-            if(go.equals(slime)) {
+            if(go.equals(slime1)) {
 //                go.
             }
         }
