@@ -1,3 +1,19 @@
+//TODO: update the header here
+/*
+Project 2 APCSA
+Mrs. Woldseth Period 4
+Brendan Aeria and Colin Finney
+
+Pre-condition: The Window class gives the character, cloud, and camera movement values into the
+scene manager class, and the Enemy class is used in order to manage several slime enemies.
+GameObjects (what I use to render sprites) are all properly declared and have their values set.
+
+Post-condition: Using these values the scene manager calculates and figures out how to
+translate, scale, and animate sprites to make the game come to life. Then the sceneManager
+ iterates through the gameObjects that have been declared and makes sure that all of the
+ sprites have been updated. This scene also manages the sound by using the values that are
+ readily available in this class.
+ */
 package jade;
 
 import org.lwjgl.Version;
@@ -14,8 +30,6 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
-
-import java.util.logging.Level;
 
 public class Window {
     private int width, height;
@@ -62,7 +76,7 @@ public class Window {
     private long audioContext;
     private long audioDevice;
 
-    private Window() {
+    private Window() { // constructs a window to the correct height and give it the correct parameters
         this.width = 1920;
         this.height = 1080;
         this.title = "Mario";
@@ -72,10 +86,10 @@ public class Window {
         a = 1;
     }
 
-    public static void changeScene(int newScene) {
+    public static void changeScene(int newScene) { // changes the scene to a frame representing the scene's id
         switch (newScene) {
             case 0:
-                currentScene = new LevelEditorScene();
+                currentScene = new sceneManager();
                 currentScene.init();
                 currentScene.start();
                 break;
@@ -90,7 +104,7 @@ public class Window {
         }
     }
 
-    public static Window get() {
+    public static Window get() { // returns the instance of the window
         if (Window.window == null) {
             Window.window = new Window();
         }
@@ -98,11 +112,12 @@ public class Window {
         return Window.window;
     }
 
-    public static Scene getScene() {
+    public static Scene getScene() { // returns the instance of the scene
         return get().currentScene;
     }
 
-    public void run() {
+
+    public void run() { // runs the program
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
@@ -122,7 +137,7 @@ public class Window {
         glfwSetErrorCallback(null).free();
     }
 
-    public void init() {
+    public void init() { // initializes the GL window and assigns the appropriate values
 //        theme.play();
         // Setup an error callback
         GLFWErrorCallback.createPrint(System.err).set();
@@ -185,7 +200,7 @@ public class Window {
         Window.changeScene(0);
     }
 
-    public void loop() {
+    public void loop() { // the mother-method that runs on loop, making up the core of the game
         float beginTime = (float)glfwGetTime();
         float endTime;
         float dt = -1.0f;
@@ -237,13 +252,13 @@ public class Window {
                 if (momentumX > -playerMaxSpeed) {
                     momentumX -= playerAccel;
                 }
-                LevelEditorScene.lastSeen("left");
+                sceneManager.lastSeen("left");
             }
             if (KeyListener.isKeyPressed(GLFW_KEY_F) || KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
                 if (momentumY > -playerMaxSpeed) {
                     momentumY -= playerAccel;
                 }
-                LevelEditorScene.lastSeen("right");
+                sceneManager.lastSeen("right");
             }
             if (!(KeyListener.isKeyPressed(GLFW_KEY_G) || KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) && !(KeyListener.isKeyPressed(GLFW_KEY_D) || KeyListener.isKeyPressed(GLFW_KEY_LEFT))) {
                 if (momentumX > 0) {
@@ -259,16 +274,16 @@ public class Window {
 
 
             if(momentumX > 2) {
-                LevelEditorScene.charRunningRight();
-                LevelEditorScene.charNotVert();
+                sceneManager.charRunningRight();
+                sceneManager.charNotVert();
             } else if (momentumX < -2) {
-                LevelEditorScene.charRunningLeft();
-                LevelEditorScene.charNotVert();
+                sceneManager.charRunningLeft();
+                sceneManager.charNotVert();
             } else if (momentumY > 2 || momentumY < -2){
-                LevelEditorScene.charVert();
+                sceneManager.charVert();
             } else {
-                LevelEditorScene.charStanding();
-                LevelEditorScene.charNotVert();
+                sceneManager.charStanding();
+                sceneManager.charNotVert();
             }
 
             if (swingCool < 1000) {
@@ -285,27 +300,27 @@ public class Window {
 // 573, 920
             if(MouseListener.mouseButtonDown(0) && swingCool > 40) {
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("botLeft");
+                    sceneManager.swingSword("botLeft");
                     swingCool = 0;
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("topLeft");
+                    sceneManager.swingSword("topLeft");
                     swingCool = 0;
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX < 0)) {
-                    LevelEditorScene.swingSword("left");
+                    sceneManager.swingSword("left");
                     swingCool = 0;
                 }
                 if ((mouseRelCharY > -midRange) && (mouseRelCharY <= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("right");
+                    sceneManager.swingSword("right");
                     swingCool = 0;
                 }
                 if ((mouseRelCharY >= midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("botRight");
+                    sceneManager.swingSword("botRight");
                     swingCool = 0;
                 }
                 if ((mouseRelCharY < -midRange) && (mouseRelCharX >= 0)) {
-                    LevelEditorScene.swingSword("topRight");
+                    sceneManager.swingSword("topRight");
                     swingCool = 0;
                 }
             }
@@ -396,12 +411,12 @@ public class Window {
                 cloud2X = 1920;
             }
 
-            LevelEditorScene.trackCamera(camX, camY);
-            LevelEditorScene.moveCharacter(moveX, moveY);
+            sceneManager.trackCamera(camX, camY);
+            sceneManager.moveCharacter(moveX, moveY);
 
-            LevelEditorScene.moveCloud(cloudX, cloudY);
-            LevelEditorScene.moveCloud1(cloud1X, cloud1Y);
-            LevelEditorScene.moveCloud2(cloud2X, cloud2Y);
+            sceneManager.moveCloud(cloudX, cloudY);
+            sceneManager.moveCloud1(cloud1X, cloud1Y);
+            sceneManager.moveCloud2(cloud2X, cloud2Y);
 
 
             glfwSwapBuffers(glfwWindow);

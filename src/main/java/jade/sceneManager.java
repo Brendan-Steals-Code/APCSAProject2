@@ -1,3 +1,21 @@
+/*
+Project 2 APCSA
+Mrs. Woldseth Period 4
+Brendan Aeria and Colin Finney
+
+Pre-condition: The Window class gives the character, cloud, and camera movement values into the
+scene manager class, and the Enemy class is used in order to manage several slime enemies.
+GameObjects (what I use to render sprites) are all properly declared and have their values set.
+
+Post-condition: Using these values the scene manager calculates and figures out how to
+translate, scale, and animate sprites to make the game come to life. Then the sceneManager
+ iterates through the gameObjects that have been declared and makes sure that all of the
+ sprites have been updated. This scene also manages the sound by using the values that are
+ readily available in this class.
+ */
+
+
+
 package jade;
 
 
@@ -13,24 +31,25 @@ import components.SpriteRenderer;
 import components.Spritesheet;
 import renderer.Texture;
 
-public class LevelEditorScene extends Scene {
+public class sceneManager extends Scene {
 
     public GameObject obj1;
     public GameObject heartContainers;
-    public GameObject slime1, slime2, slime3, slime4, slime5, slime6, slime7, slime8, slime9, slime10, slime11;
+    public GameObject villager;
+    public GameObject slime1, slime2, slime3, slime5, slime6, slime7, slime8, slime9, slime10, slime11;
     public Enemy en1 = new Enemy(300, 700, 4, 120, 1, 3.5);
-    public Enemy en2 = new Enemy(-1300, -700, 5, 125, 2, 5);
-    public Enemy en3 = new Enemy(3000, 700, 6, 130, 3, 6);
-    public Enemy en4 = new Enemy(-3000, -700, 7, 140, 4, 4);
-    public Enemy en5 = new Enemy(3300, -7000, 10, 160, 5, 3);
-    public Enemy en6 = new Enemy(-7000, 8000, 20, 200, 6, 2.5);
-    public Enemy en7 = new Enemy(-20000, 20000, 8, 120, 7, 4.5);
-    public Enemy en8 = new Enemy(-30000, -7000, 7, 140, 4, 3.2);
-    public Enemy en9 = new Enemy(33000, -70000, 10, 160, 5, 6.5);
-    public Enemy en10 = new Enemy(-40000, 40000, 20, 200, 6, 3.3);
-    public Enemy en11 = new Enemy(20000, -30000, 8, 120, 7, 4.8);
+    public Enemy en2 = new Enemy(-1300, -7000, 5, 125, 2, 4.2);
+    public Enemy en3 = new Enemy(3000, 700, 6, 130, 3, 4.6);
+//    public Enemy en4 = new Enemy(-3000, -700, 7, 140, 4, 4);
+    public Enemy en5 = new Enemy(3300, -7000, 10, 160, 5, 3.8);
+    public Enemy en6 = new Enemy(-7000, 80000, 20, 200, 6, 4.5);
+    public Enemy en7 = new Enemy(-2000, 2000, 8, 120, 7, 4.5);
+    public Enemy en8 = new Enemy(-30000, -7000, 7, 140, 4, 4.2);
+    public Enemy en9 = new Enemy(3300, -7000, 10, 160, 5, 4.5);
+    public Enemy en10 = new Enemy(-4000, 4000, 40, 450, 6, 2.8);
+    public Enemy en11 = new Enemy(2000, -3000, 8, 120, 7, 4.8);
 
-    public Enemy[] enemyList = new Enemy[]{en1, en2, en3, en4, en5, en6, en7, en8, en9, en10, en11};
+    public Enemy[] enemyList = new Enemy[]{en1, en2, en3, en5, en6, en7, en8, en9, en10, en11};
     public GameObject cloud;
     public GameObject cloud1;
     public GameObject cloud2;
@@ -106,13 +125,14 @@ public class LevelEditorScene extends Scene {
     private boolean alreadyDead = false;
     private int deadCamX;
     private int deadCamY;
+    private int enemiesKilled = 0;
 
-    public LevelEditorScene() {
+    public sceneManager() {
 
     }
 
     @Override
-    public void init() {
+    public void init() { // Initiate the scene
         loadResources();
 
         this.camera = new Camera(new Vector2f(-350, 0));
@@ -135,8 +155,8 @@ public class LevelEditorScene extends Scene {
         slime2.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
         slime3 = new GameObject("Object 3", new Transform(new Vector2f(en3.getX(), en3.getY()), new Vector2f(en3.getSize(), en3.getSize())), 3);
         slime3.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
-        slime4 = new GameObject("Object 3", new Transform(new Vector2f(en4.getX(), en4.getY()), new Vector2f(en4.getSize(), en4.getSize())), 3);
-        slime4.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
+//        slime4 = new GameObject("Object 3", new Transform(new Vector2f(en4.getX(), en4.getY()), new Vector2f(en4.getSize(), en4.getSize())), 3);
+//        slime4.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
         slime5 = new GameObject("Object 3", new Transform(new Vector2f(en5.getX(), en5.getY()), new Vector2f(en5.getSize(), en5.getSize())), 3);
         slime5.addComponent(new SpriteRenderer(slimeAnim.getSprite(slimeSpriteIndex)));
         slime6 = new GameObject("Object 3", new Transform(new Vector2f(en6.getX(), en6.getY()), new Vector2f(en6.getSize(), en6.getSize())), 3);
@@ -170,6 +190,9 @@ public class LevelEditorScene extends Scene {
         overText = new GameObject("Swing", new Transform(new Vector2f(-350, 0), new Vector2f(900, 150)), 3);
         overText.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/gameOver.png"))));
 
+        villager = new GameObject("Swing", new Transform(new Vector2f(-350, 0), new Vector2f(900, 150)), 3);
+        villager.addComponent(new SpriteRenderer(new Sprite(AssetPool.getTexture("assets/images/gameOver.png"))));
+
 
         this.addGameObjectToScene(obj2);
         this.addGameObjectToScene(slime11);
@@ -179,7 +202,7 @@ public class LevelEditorScene extends Scene {
         this.addGameObjectToScene(slime7);
         this.addGameObjectToScene(slime6);
         this.addGameObjectToScene(slime5);
-        this.addGameObjectToScene(slime4);
+//        this.addGameObjectToScene(slime4);
         this.addGameObjectToScene(slime3);
         this.addGameObjectToScene(slime2);
         this.addGameObjectToScene(slime1);
@@ -197,7 +220,7 @@ public class LevelEditorScene extends Scene {
 
     }
 
-    private void loadResources() {
+    private void loadResources() { // Loads all images & sounds
         AssetPool.getShader("assets/shaders/default.glsl");
 
         AssetPool.addSpritesheet("assets/images/spritesheet.png",
@@ -209,31 +232,31 @@ public class LevelEditorScene extends Scene {
         AssetPool.addSound("assets/sounds/lose.ogg", false);
     }
 
-    public static void moveCharacter(int x, int y) {
+    public static void moveCharacter(int x, int y) { // sets the character's x and y values to the method arguments
         charXVal = x;
         charYVal = y;
     }
 
-    public static void trackCamera(int x, int y) {
+    public static void trackCamera(int x, int y) { // offsets the x and y values to match the camera
         camXVal = x - 560;
         camYVal = y - 240;
     }
 
-    public static void moveCloud(int x, int y) {
+    public static void moveCloud(int x, int y) { // Move the cloud to the specified x and y coordinates
         cloudX = x;
         cloudY = y;
     }
-    public static void moveCloud1(int x, int y) {
+    public static void moveCloud1(int x, int y) { // Move the second cloud to the specified x and y coordinates
         cloud1X = x;
         cloud1Y = y;
     }
-    public static void moveCloud2(int x, int y) {
+    public static void moveCloud2(int x, int y) { // Move the third cloud to the specified x and y coordinates
         cloud2X = x;
         cloud2Y = y;
     }
 
-    public boolean isHitChar() {
-        if (en1.getEnHitting() || en2.getEnHitting() || en3.getEnHitting() || en4.getEnHitting() || en5.getEnHitting() || en6.getEnHitting()) {
+    public boolean isHitChar() { // detect whether an enemy is hitting the character
+        if (en1.getEnHitting() || en2.getEnHitting() || en3.getEnHitting() || en5.getEnHitting() || en6.getEnHitting() || en7.getEnHitting() || en8.getEnHitting() || en9.getEnHitting() || en10.getEnHitting() || en11.getEnHitting()) {
             return true;
         } else {
             return false;
@@ -241,36 +264,25 @@ public class LevelEditorScene extends Scene {
 
     }
 
-    public static void charRunningRight() {
+    public static void charRunningRight() { // set the character to be running to the right
         charRunning = "right";
     }
-    public static void charRunningLeft() {
+    public static void charRunningLeft() { // set the character to be running to the left
         charRunning = "left";
     }
-    public static void charStanding() {
+    public static void charStanding() { // set the character to be standing still
         charRunning = "standing";
     }
-    public static void charVert() {
+    public static void charVert() { // set the character to be oriented vertically
         charVerticle = true;
         charRunning = "verticle";
     }
-    public static void charNotVert() {
+    public static void charNotVert() { // set the character to be oriented horizontally
         charVerticle = false;
     }
-    public static void lastSeen(String l) {lastDir = l;}
-    
-    
-    public static void enemLeft() {
-        enemDir = "left";
-    }
-    public static void enemRight() {
-        enemDir = "right";
-    }
-    
-    
+    public static void lastSeen(String l) {lastDir = l;} // update the lastSeen variable to the existing argument
 
-
-    public static void swingSword(String dir) {
+    public static void swingSword(String dir) { // swings the sword in the specified direction
         swingDir = dir;
         if (swingDir == "botLeft" || swingDir == "topLeft" || swingDir == "topRight" || swingDir == "botRight") {
             swinging = true;
@@ -279,25 +291,14 @@ public class LevelEditorScene extends Scene {
         }
     }
 
-    public static void moveBodySword(){
-       // bodySwordX = charXVal;
-       // bodySwordY = charYVal;
-    }
-
-
     @Override
-    public void update(float dt) {
+    public void update(float dt) { // updates the scene and normalizes the time between frames
         for (Enemy slime : enemyList) {
             slime.getCharMove(charXVal, charYVal);
             slime.updateEnemy();
-//            if(slime.getNum() == 1) {
-//                slime2.transform.position = new Vector2f(slime.getX(), slime.getY());
-//            }
-
             if (swinging || swinging1) {
                 if (swingDir == "botLeft") {
                     if((slime.getX() < charXVal + 60) && (slime.getX() > charXVal - 270) && (slime.getY() < charYVal + 100) && (slime.getY() > charYVal - 270)) {
-//                        slime.gotHit();
                         slime.getCharHit(true);
                     }
                 }
@@ -399,16 +400,15 @@ public class LevelEditorScene extends Scene {
                 charDamage++;
             }
         }
-        System.out.println(charDamage);
         obj1.getComponent(SpriteRenderer.class).setSprite(charAnim.getSprite(charSpriteIndex));
 
-        if (charDamage > 60) {
+        if (charDamage > 10) {
             heartIndex = 1;
         }
-        if (charDamage > 120) {
+        if (charDamage > 40) {
             heartIndex = 2;
         }
-        if (charDamage > 180) {
+        if (charDamage > 80) {
             heartIndex = 3;
             obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(6));
             charDead = true;
@@ -440,6 +440,7 @@ public class LevelEditorScene extends Scene {
             } else if (charDeadCounter < 160) {
                 obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(8));
             } else {
+
                 obj1.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(8));
             }
         }
@@ -521,7 +522,6 @@ public class LevelEditorScene extends Scene {
             if (slime.slimeHit) {
                 if (slime.enHitCounter == 0) {
                     slime.gotHit();
-                    System.out.println("Slime: " + slime.getNum() + " -- IN HIT THING");
                     slime.enHitCounter += 1;
                 }
                 slime.enemyHitX = slime.getX();
@@ -537,9 +537,9 @@ public class LevelEditorScene extends Scene {
                 if (slime.getNum() == 3) {
                     slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
                 }
-                if (slime.getNum() == 4) {
-                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
-                }
+//                if (slime.getNum() == 4) {
+//                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
+//                }
                 if (slime.getNum() == 5) {
                     slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(4));
                 }
@@ -576,9 +576,9 @@ public class LevelEditorScene extends Scene {
                 if (slime.getNum() == 3) {
                     slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
                 }
-                if (slime.getNum() == 4) {
-                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
-                }
+//                if (slime.getNum() == 4) {
+//                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+//                }
                 if (slime.getNum() == 5) {
                     slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
                 }
@@ -612,9 +612,9 @@ public class LevelEditorScene extends Scene {
                 if (slime.getNum() == 3) {
                     slime3.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
                 }
-                if (slime.getNum() == 4) {
-                    slime4.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
-                }
+//                if (slime.getNum() == 4) {
+//                    slime4.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
+//                }
                 if (slime.getNum() == 5) {
                     slime5.transform.position = new Vector2f(slime.enemyHitX, slime.enemyHitY);
                 }
@@ -649,9 +649,9 @@ public class LevelEditorScene extends Scene {
                 if (slime.getNum() == 3) {
                     slime3.transform.position = new Vector2f(slime.getX(), slime.getY());
                 }
-                if (slime.getNum() == 4) {
-                    slime4.transform.position = new Vector2f(slime.getX(), slime.getY());
-                }
+//                if (slime.getNum() == 4) {
+//                    slime4.transform.position = new Vector2f(slime.getX(), slime.getY());
+//                }
                 if (slime.getNum() == 5) {
                     slime5.transform.position = new Vector2f(slime.getX(), slime.getY());
                 }
@@ -681,6 +681,9 @@ public class LevelEditorScene extends Scene {
 
             if (slime.enemyDead) {
                 slime.slimeDeadCounter += 1;
+                if(slime.slimeDeadCounter == 5) {
+                    enemiesKilled++;
+                }
                 if(slime.slimeDeadCounter < 30) {
                     slime.slimeSpriteIndex = 4;
                 } else if (slime.slimeDeadCounter < 60) {
@@ -703,9 +706,9 @@ public class LevelEditorScene extends Scene {
                 if (slime.getNum() == 3) {
                     slime3.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
                 }
-                if (slime.getNum() == 4) {
-                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
-                }
+//                if (slime.getNum() == 4) {
+//                    slime4.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
+//                }
                 if (slime.getNum() == 5) {
                     slime5.getComponent(SpriteRenderer.class).setSprite(slimeAnim.getSprite(slime.slimeSpriteIndex));
                 }
@@ -758,7 +761,7 @@ public class LevelEditorScene extends Scene {
 
 
         Collection<Sound> sounds = AssetPool.getAllSounds();
-        for (Sound sound : sounds) {
+        for (Sound sound : sounds) { // play all sounds from the game in the proper context
             File tmp = new File(sound.getFilepath());
             if (tmp.getName().equals("theme.ogg") && !(charDead)) {
                 sound.play();
@@ -770,7 +773,6 @@ public class LevelEditorScene extends Scene {
 
             if (charDead && tmp.getName().equals("lose.ogg") && !(alreadyDead)) {
                 sound.play();
-                System.out.println("DEAD AND SHOULD BE PLAYING");
                 alreadyDead = true;
             }
 
@@ -821,7 +823,7 @@ public class LevelEditorScene extends Scene {
 
 
 
-        for (GameObject go : this.gameObjects) {
+        for (GameObject go : this.gameObjects) { // update all of the game objects
             go.update(dt);
             if (go.equals(heartContainers)) {
                 go.transform.position = new Vector2f(camXVal - 140, camYVal + 590);
@@ -887,5 +889,6 @@ public class LevelEditorScene extends Scene {
 
 
         this.renderer.render();
+        System.out.println(enemiesKilled);
     }
 }
