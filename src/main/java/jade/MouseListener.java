@@ -1,3 +1,7 @@
+//    This class also heavily relies on the imports from GLFW and is able to return not only boolean values
+//    when any click is made on the mouse, but it also returns the coordinates of the mouse in relation to
+//    the screen.
+
 package jade;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;

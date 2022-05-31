@@ -1,4 +1,4 @@
-package jade;
+package jade.fromTutorial;
 
 import java.util.ArrayList;
 import java.util.List;

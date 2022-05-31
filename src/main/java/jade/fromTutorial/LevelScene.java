@@ -1,4 +1,6 @@
-package jade;
+package jade.fromTutorial;
+
+import jade.Window;
 
 public class LevelScene extends Scene {
     public LevelScene() {

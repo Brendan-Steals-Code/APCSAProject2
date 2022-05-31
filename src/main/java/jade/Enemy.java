@@ -1,19 +1,6 @@
-//TODO: update header
-/*
-Project 2 APCSA
-Mrs. Woldseth Period 4
-Brendan Aeria and Colin Finney
-
-Pre-condition: The Window class gives the character, cloud, and camera movement values into the
-scene manager class, and the Enemy class is used in order to manage several slime enemies.
-GameObjects (what I use to render sprites) are all properly declared and have their values set.
-
-Post-condition: Using these values the scene manager calculates and figures out how to
-translate, scale, and animate sprites to make the game come to life. Then the sceneManager
- iterates through the gameObjects that have been declared and makes sure that all of the
- sprites have been updated. This scene also manages the sound by using the values that are
- readily available in this class.
- */
+//     This class is mainly used in the sceneManager class in order to easily make multiple enemies
+//     without having to repeat code. It achieves this by having a lot of initial parameters for health
+//     points, speed, location, etc. that define the individual enemies.
 
 package jade;
 
@@ -107,7 +94,8 @@ public class Enemy {
     } // returns the direction that the slime is facing
 
     public void updateEnemy() { // updates the enemy's direction, whether or not the player is hit, and x & y vals
-        if (!enemyDead) {
+
+        if (!enemyDead) { // move the enemy as long as it is alive
             if (moveX < enemyXVal) {
                 enemyXVal -= speed;
                 slimeDir = "left";
@@ -125,7 +113,8 @@ public class Enemy {
             }
         }
 
-        if (((enemyXVal < moveX + 60 && enemyXVal > moveX - 20) && (enemyYVal < moveY + 20 && enemyYVal > moveY - 30)) && !enemyDead) {
+//        Determines if the enemy is within range and is attacking the character
+        if (((enemyXVal <= moveX + 40 && enemyXVal >= moveX - 20) && (enemyYVal <= moveY + 20 && enemyYVal >= moveY - 20)) && !enemyDead) {
             charHit = true;
 //            System.out.println("En hitting: " + slimeNumber);
         } else {

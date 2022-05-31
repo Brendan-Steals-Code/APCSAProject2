@@ -1,3 +1,6 @@
+//    This class heavily relies on the imports from GLFW and is able to return boolean values
+//    when any key on the keyboard is pressed.
+
 package jade;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;

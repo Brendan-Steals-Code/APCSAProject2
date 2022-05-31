@@ -1,5 +1,7 @@
-package jade;
+package jade.fromTutorial;
 
+import jade.Camera;
+import jade.fromTutorial.GameObject;
 import renderer.Renderer;
 
 import java.util.ArrayList;

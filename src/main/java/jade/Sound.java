@@ -1,3 +1,7 @@
+//      This is a really basic class that uses imports from openal which allows me to take sounds
+//      or even entire songs in the form of .ogg files and plays them. I used the methods in this
+//      class in sceneManager in order to know when to play and if to loop the sounds.
+
 package jade;
 
 import java.nio.IntBuffer;

@@ -1,7 +1,7 @@
 package components;
 
-import jade.Component;
-import jade.Transform;
+import jade.fromTutorial.Component;
+import jade.fromTutorial.Transform;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import renderer.Texture;

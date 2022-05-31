@@ -1,4 +1,4 @@
-package jade;
+package jade.fromTutorial;
 
 public abstract class Component {
 

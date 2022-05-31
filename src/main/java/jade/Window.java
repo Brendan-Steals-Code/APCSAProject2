@@ -1,21 +1,20 @@
-//TODO: update the header here
 /*
 Project 2 APCSA
 Mrs. Woldseth Period 4
 Brendan Aeria and Colin Finney
 
-Pre-condition: The Window class gives the character, cloud, and camera movement values into the
-scene manager class, and the Enemy class is used in order to manage several slime enemies.
-GameObjects (what I use to render sprites) are all properly declared and have their values set.
+Pre-condition: The entire frame of the game is created here and the scene manager class
+is used in order to generate and manipulate sprites on the screen.
 
-Post-condition: Using these values the scene manager calculates and figures out how to
-translate, scale, and animate sprites to make the game come to life. Then the sceneManager
- iterates through the gameObjects that have been declared and makes sure that all of the
- sprites have been updated. This scene also manages the sound by using the values that are
- readily available in this class.
+Post-condition: Inputs from the KeyListener as well as coordinates and clicks from the
+mouse are taken from the MouseListener class. The camera class is also used as an easy
+way to manipulate all of the sprites in the scene in order to give an effect of moving
+the camera.
  */
 package jade;
 
+import jade.fromTutorial.LevelScene;
+import jade.fromTutorial.Scene;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;

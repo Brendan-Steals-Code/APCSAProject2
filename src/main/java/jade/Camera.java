@@ -1,3 +1,5 @@
+//     Allows the camera to actually be moved along the scene just like a sprite and be used by the Window class
+
 package jade;
 
 import org.joml.Matrix4f;

@@ -22,6 +22,9 @@ package jade;
 import java.io.File;
 import java.util.Collection;
 
+import jade.fromTutorial.GameObject;
+import jade.fromTutorial.Scene;
+import jade.fromTutorial.Transform;
 import org.joml.Vector2f;
 import util.AssetPool;
 
